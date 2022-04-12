@@ -1,7 +1,7 @@
-import { Routes, Route, Navigate } from 'react-router-dom'
-import Home from '../../pages/Home'
-import Banks from '../../pages/Banks'
-import Calc from '../../pages/Calc'
+import { Routes, Route } from 'react-router-dom'
+import Home from '../pages/Home'
+import Banks from '../pages/Banks'
+import Calc from '../pages/Calc'
 
 function AppRoutes() {
 
@@ -18,7 +18,6 @@ function AppRoutes() {
                     <Banks />
                 }
             />
-            <Route path='*' element={<Navigate to='/not-found-404' />} />
         </Routes>
     )
 }

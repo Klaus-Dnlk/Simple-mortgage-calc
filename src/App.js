@@ -1,6 +1,6 @@
 import { AppBar, Toolbar, Button } from '@mui/material'
 import { Link, NavLink } from 'react-router-dom'
-import Routes from './routes/Routes'
+import Routes from './routes'
 import './App.css'
 
 function App() {
