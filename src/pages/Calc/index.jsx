@@ -26,7 +26,6 @@ function Calc() {
   const [loanTerm, setLoanTerm] = React.useState('')
   const [loanApr, setLoanApr] = React.useState('')
   const [monthPayment, setMonthPayment] = React.useState('0.0')
-  // const [banks, setBanks] = React.useState('')
   const banks = useSelector(banksSelectors.getAllBanks);
   const dispatch = useDispatch();
   const isLoading = useSelector(banksSelectors.getLoading);
@@ -41,12 +40,6 @@ function Calc() {
       setLoanApr('')
     }
   }
-
-  
-
-  
-  console.log('value:', value);
-  console.log('banks:', banks);
 
   useEffect(() => {
     dispatch(banksOperations.fetchBanks());
@@ -67,15 +60,10 @@ function Calc() {
 
   const filingForm = (value) => {
     const foundEl = banks.find(el => el.BankName === value) 
-    const indexEl = banks.indexOf(foundEl)
     setInitialLoan(foundEl.MaximumLoan)
     setDownPayment(foundEl.MinimumDownPayment)
     setLoanTerm(foundEl.LoanTerm)
     setLoanApr(foundEl.InterestRate)
-    
-    
-    console.log('foundElement:', foundEl);
-    console.log('indexOfElement:', indexEl);
   }
 
   const handleChange = (e) => {
@@ -83,7 +71,7 @@ function Calc() {
     filingForm(e.target.value)
   }
 
-  const reset = (e) => {    
+  const reset = () => {    
     setInitialLoan('')
     setDownPayment('')
     setLoanTerm('')
@@ -94,13 +82,10 @@ function Calc() {
 
   return (
   <Box>
-
     <Box sx={{ m: 5 }}>
-
      <FormControl fullWidth sx={{ mb: 5 }}>
         <InputLabel id="selectBank">Bank name</InputLabel>
         <Select
-
           labelId="selectBank"
           id="demo-simple-select"
           value={value}
