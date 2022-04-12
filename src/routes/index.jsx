@@ -18,6 +18,7 @@ function AppRoutes() {
                     <Banks />
                 }
             />
+           
         </Routes>
     )
 }

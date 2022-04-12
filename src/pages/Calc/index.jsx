@@ -31,7 +31,7 @@ function Calc() {
   const dispatch = useDispatch();
   const isLoading = useSelector(banksSelectors.getLoading);
 
-  const [value, setValue] = React.useState()
+  const [value, setValue] = React.useState('')
 
   const filinForm = () => {
     if(banks.BankName.find(value)) {
@@ -46,6 +46,7 @@ function Calc() {
 
   
   console.log('value:', value);
+  console.log('banks:', banks);
 
   useEffect(() => {
     dispatch(banksOperations.fetchBanks());
@@ -64,8 +65,22 @@ function Calc() {
     calculateValues()    
   }
 
+  const filingForm = (value) => {
+    const foundEl = banks.find(el => el.BankName === value) 
+    const indexEl = banks.indexOf(foundEl)
+    setInitialLoan(foundEl.MaximumLoan)
+    setDownPayment(foundEl.MinimumDownPayment)
+    setLoanTerm(foundEl.LoanTerm)
+    setLoanApr(foundEl.InterestRate)
+    
+    
+    console.log('foundElement:', foundEl);
+    console.log('indexOfElement:', indexEl);
+  }
+
   const handleChange = (e) => {
-    // setValue(e.target.value)
+    setValue(e.target.value)
+    filingForm(e.target.value)
   }
 
   const reset = (e) => {    
@@ -74,6 +89,7 @@ function Calc() {
     setLoanTerm('')
     setLoanApr('')
     setMonthPayment('')
+    setValue('')
   }  
 
   return (
@@ -87,7 +103,7 @@ function Calc() {
 
           labelId="selectBank"
           id="demo-simple-select"
-          value={banks.BankName}
+          value={value}
           label="Bank name"
           onChange={handleChange}>
             {banks.map(({ id, BankName }) => (
@@ -95,41 +111,42 @@ function Calc() {
             ))}
         </Select>
       </FormControl>
-
-      <FormControl>
-        <InputLabel>Initial Loan</InputLabel>
-        <OutlinedInput 
-          value={initialLoan}
-          onChange={(e) => setInitialLoan(e.target.value)}
-          type="text"
-        />
-      </FormControl>
-
-      <FormControl>
-        <InputLabel>Down Payment</InputLabel>
+      <Box sx={{ display: 'flex', mx: 'auto', width: 800 }}>
+        <FormControl>
+          <InputLabel>Initial Loan</InputLabel>
           <OutlinedInput 
-            onChange={(e) => setDownPayment(e.target.value)}
+            value={initialLoan}
+            onChange={(e) => setInitialLoan(e.target.value)}
             type="text"
           />
-      </FormControl>
+        </FormControl>
 
-      <FormControl>
-        <InputLabel>Loan Term (y)</InputLabel>
-        <OutlinedInput 
-          value={loanTerm}
-          onChange={(e) => setLoanTerm(e.target.value)}
-          type="text"
-        />
-      </FormControl>
+        <FormControl>
+          <InputLabel>Down Payment</InputLabel>
+            <OutlinedInput 
+              onChange={(e) => setDownPayment(e.target.value)}
+              type="text"
+            />
+        </FormControl>
 
-      <FormControl>
-        <InputLabel>APR (%)</InputLabel>
-        <OutlinedInput 
-        value={loanApr}
-          onChange={(e) => setLoanApr(e.target.value)}
-          type="text"
-        />
-      </FormControl>
+        <FormControl>
+          <InputLabel>Loan Term (y)</InputLabel>
+          <OutlinedInput 
+            value={loanTerm}
+            onChange={(e) => setLoanTerm(e.target.value)}
+            type="text"
+          />
+        </FormControl>
+
+        <FormControl>
+          <InputLabel>APR (%)</InputLabel>
+          <OutlinedInput 
+          value={loanApr}
+            onChange={(e) => setLoanApr(e.target.value)}
+            type="text"
+          />
+        </FormControl>
+      </Box>
       
       <Box sx={{ display: 'flex', mx: 'auto', mt: 3, width: 200 }}>
         <Button

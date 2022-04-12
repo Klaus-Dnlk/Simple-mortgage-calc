@@ -13,11 +13,12 @@ function Home() {
         >
             <Grid container spacing={3}>
                 <Grid item xs={12}>
-                    <Typography variant="h2" gutterBottom>
+                    <Typography variant="h3" sx={{textAlign: 'center'}}>Welcome to</Typography>
+                    <Typography variant="h2" gutterBottom sx={{textAlign: 'center'}}>
                         Mortgage Calculator
                     </Typography>
-                    <Typography variant="body1" gutterBottom>
-                    This application is created for the service of mortgage calculating.
+                    <Typography variant="body1" gutterBottom sx={{textAlign: 'center'}}>
+                    This application is created for the mortgage calculating service.
                     </Typography>
                 </Grid>
             </Grid>
