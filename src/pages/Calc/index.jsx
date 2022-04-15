@@ -109,6 +109,7 @@ function Calc() {
         <FormControl>
           <InputLabel>Down Payment</InputLabel>
             <OutlinedInput 
+            value={downPayment}
               onChange={(e) => setDownPayment(e.target.value)}
               type="text"
             />
