@@ -3,7 +3,7 @@ import axios from 'axios'
 axios.defaults.baseURL = 'https://625314acc534af46cb93846b.mockapi.io/api/'
 
 const fetchBanks = () => {
-  return axios.get('/banks').then((data) => console.log(data.data))
+  return axios.get('/banks').then((data) => data.data)
 }
 
 const updateBank = async (bankId, update) => {

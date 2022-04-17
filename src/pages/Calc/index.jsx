@@ -1,45 +1,40 @@
 import * as React from 'react';
-import Box from '@mui/material/Box';
-import { Button } from '@mui/material';
-import OutlinedInput from '@mui/material/OutlinedInput';
-import InputLabel from '@mui/material/InputLabel';
-import FormControl from '@mui/material/FormControl';
-import Paper from '@mui/material/Paper';
-import Typography from '@mui/material/Typography';
+import { 
+  Box, 
+  Button, 
+  OutlinedInput, 
+  InputLabel, 
+  FormControl, 
+  Paper, 
+  Typography, 
+  IconButton, 
+  Tooltip, 
+  MenuItem, 
+  Select  
+} from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete';
+
 import { banksOperations, banksSelectors } from '../../redux/banks';
 import { useSelector, useDispatch } from 'react-redux';
 import { useEffect } from 'react';
-
-import DeleteIcon from '@mui/icons-material/Delete';
-import IconButton from '@mui/material/IconButton';
-import Tooltip from '@mui/material/Tooltip';
-
 import numeral from 'numeral';
-import MenuItem from '@mui/material/MenuItem';
-import Select from '@mui/material/Select';
+
 
 
 function Calc() {  
   
+  const banks = useSelector(banksSelectors.getAllBanks);
+  const dispatch = useDispatch();
+
   const [initialLoan, setInitialLoan] = React.useState('')
   const [downPayment, setDownPayment] = React.useState('')
   const [loanTerm, setLoanTerm] = React.useState('')
   const [loanApr, setLoanApr] = React.useState('')
   const [monthPayment, setMonthPayment] = React.useState('0.0')
-  const banks = useSelector(banksSelectors.getAllBanks);
-  const dispatch = useDispatch();
   const isLoading = useSelector(banksSelectors.getLoading);
+  const [bankValue, setBankValue] = React.useState('')
 
-  const [value, setValue] = React.useState('')
 
-  const filinForm = () => {
-    if(banks.BankName.find(value)) {
-      setInitialLoan(banks.initialLoan)
-      setDownPayment('')
-      setLoanTerm('')
-      setLoanApr('')
-    }
-  }
 
   useEffect(() => {
     dispatch(banksOperations.fetchBanks());
@@ -48,6 +43,8 @@ function Calc() {
 
   const submitCalc = (e) => {
     e.preventDefault()
+
+    // Calculation
     
     const calculateValues = () => {      
       let principal = initialLoan
@@ -67,7 +64,7 @@ function Calc() {
   }
 
   const handleChange = (e) => {
-    setValue(e.target.value)
+    setBankValue(e.target.value)
     filingForm(e.target.value)
   }
 
@@ -77,7 +74,7 @@ function Calc() {
     setLoanTerm('')
     setLoanApr('')
     setMonthPayment('')
-    setValue('')
+    setBankValue('')
   }  
 
   return (
@@ -88,7 +85,7 @@ function Calc() {
         <Select
           labelId="selectBank"
           id="demo-simple-select"
-          value={value}
+          value={bankValue}
           label="Bank name"
           onChange={handleChange}>
             {banks.map(({ id, BankName }) => (
@@ -116,7 +113,7 @@ function Calc() {
         </FormControl>
 
         <FormControl>
-          <InputLabel>Loan Term (y)</InputLabel>
+          <InputLabel>Loan Term (m)</InputLabel>
           <OutlinedInput 
             value={loanTerm}
             onChange={(e) => setLoanTerm(e.target.value)}

@@ -1,9 +1,12 @@
 This is a draft version of the Mortgage calculator (draft, because some functions are not finished)
 
 You can visit BANKS page to see banks and their term and conditions on credit service.
-For now you can only delete chosen bank.
 
-I used mockapi server service for the testing of the application
+Bank page:
+-- You can create a new Bank Card with mortgage credentials.
+-- You can delete bank item from the list of you banks.
 
-Calculator: it's working!) you can account your monthly mortgage payment, clear the inputs.
-You can choose the bank from the dropdown select list, and operate by bank credentials using mortgage calc.
+Calculator: You can use mortgage calculator by entering credentials by yourselfe of to choose the bank from select drop-down list.
+
+I used mockapi server service for the testing of the application.
+You can GET bank information, you can POST new items or DELETE them.

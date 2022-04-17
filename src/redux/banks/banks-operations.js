@@ -16,9 +16,18 @@ export const fetchBanks = createAsyncThunk(
 
 export const addNewBank = createAsyncThunk(
   'banks/addNewBank',
-  async ({ name, phone }, { rejectWithValue }) => {
+  async (
+    { BankName, MaximumLoan, MinimumDownPayment, LoanTerm, InterestRate },
+    { rejectWithValue },
+  ) => {
     try {
-      const { data } = await axios.post('/banks', { name, phone })
+      const { data } = await axios.post('/banks', {
+        BankName,
+        MaximumLoan,
+        MinimumDownPayment,
+        LoanTerm,
+        InterestRate,
+      })
       return data
     } catch (error) {
       rejectWithValue(error)
