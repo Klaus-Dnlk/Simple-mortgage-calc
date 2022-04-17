@@ -6,17 +6,13 @@ import { v4 as uuidv4 } from 'uuid';
 import { getAllBanks } from '../../redux/banks/banks-selectors'
 import banksOperations from '../../redux/banks/banks-operations';
 
-
-
-
 function NewBankCard() {
 
     const [BankName, setName] = React.useState('')
     const [MaximumLoan, setLoan] = React.useState('')
     const [MinimumDownPayment, setDwnPay] = React.useState('')
     const [LoanTerm, setTerm] = React.useState('')
-    const [InterestRate, setRate] = React.useState('')
-    
+    const [InterestRate, setRate] = React.useState('')    
 
     const banks = useSelector(getAllBanks)
     const dispatch = useDispatch()
@@ -44,8 +40,7 @@ function NewBankCard() {
             default:
                 break;
             }
-        }
-    
+        }    
 
     const handleSubmit = e => {
         e.preventDefault()
