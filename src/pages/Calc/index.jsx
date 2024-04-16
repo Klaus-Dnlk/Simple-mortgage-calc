@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Box, 
   Button, 
@@ -16,7 +16,6 @@ import DeleteIcon from '@mui/icons-material/Delete';
 
 import { banksOperations, banksSelectors } from '../../redux/banks';
 import { useSelector, useDispatch } from 'react-redux';
-import { useEffect } from 'react';
 import numeral from 'numeral';
 
 
@@ -26,13 +25,15 @@ function Calc() {
   const banks = useSelector(banksSelectors.getAllBanks);
   const dispatch = useDispatch();
 
-  const [initialLoan, setInitialLoan] = React.useState('')
-  const [downPayment, setDownPayment] = React.useState('')
-  const [loanTerm, setLoanTerm] = React.useState('')
-  const [loanApr, setLoanApr] = React.useState('')
-  const [monthPayment, setMonthPayment] = React.useState('0.0')
-  const isLoading = useSelector(banksSelectors.getLoading);
-  const [bankValue, setBankValue] = React.useState('')
+  const [initialLoan, setInitialLoan] = useState('');
+  const [downPayment, setDownPayment] = useState('');
+  const [loanTerm, setLoanTerm] = useState('');
+  const [loanApr, setLoanApr] = useState('');
+  const [monthPayment, setMonthPayment] = useState('0.0');
+  const isLoading = useSelector(state => state.banks.isLoading);
+  const [bankValue, setBankValue] = useState('');
+  const [error, setError] = useState('');
+  const [warning, setWarning] = useState('');
 
 
 
@@ -44,15 +45,23 @@ function Calc() {
   const submitCalc = (e) => {
     e.preventDefault()
 
+    if (loanApr > 100 || loanApr < 0) {
+      setError('Invalid interest rate');
+      return;
+    } else if (loanApr > 15) {
+      setWarning('Consider negotiating for a better rate');
+    } else {
+      setError('');
+      setWarning('');
+    }
+
     // Calculation
     
-    const calculateValues = () => {      
-      let principal = initialLoan
-      let monthlyInterest = loanApr / 100 / 12
-      let monthPayment = ((principal * monthlyInterest) * Math.pow((1  + monthlyInterest), loanTerm*12))/(Math.pow(1 + monthlyInterest, loanTerm*12) - 1)
-      setMonthPayment(monthPayment)     
-    }
-    calculateValues()    
+    let principal = initialLoan
+    let monthlyInterest = loanApr / 100 / 12
+    let monthPayment = ((principal * monthlyInterest) * Math.pow((1  + monthlyInterest), loanTerm*12))/(Math.pow(1 + monthlyInterest, loanTerm*12) - 1)
+    setMonthPayment(monthPayment)     
+        
   }
 
   const filingForm = (value) => {
@@ -69,12 +78,14 @@ function Calc() {
   }
 
   const reset = () => {    
-    setInitialLoan('')
-    setDownPayment('')
-    setLoanTerm('')
-    setLoanApr('')
-    setMonthPayment('')
-    setBankValue('')
+    setInitialLoan('');
+    setDownPayment('');
+    setLoanTerm('');
+    setLoanApr('');
+    setMonthPayment('0.0');
+    setBankValue('');
+    setError('');
+    setWarning('');
   }  
 
   return (
@@ -131,21 +142,18 @@ function Calc() {
         </FormControl>
       </Box>
       
-      <Box sx={{ display: 'flex', mx: 'auto', mt: 3, width: 200 }}>
-        <Button
-            variant='contained'
-            type="submit"
-            sx={{ ml: 3, height: 50 }}
-            onClick={(e) => submitCalc(e)}
-        >
-            Calculate
-        </Button>
-
-        <Tooltip title="clear">
-          <IconButton>
-            <DeleteIcon onClick={reset}/>
+      <Box sx={{ display: 'flex', mx: 'auto', mt: 3, width: 350 }}>
+      <Button variant='contained' onClick={submitCalc}>Calculate</Button>
+        <Tooltip title="Clear">
+          <IconButton onClick={reset} data-testid="reset">
+            <DeleteIcon />
           </IconButton>
         </Tooltip>
+        {error && <Typography data-testid="calc-error">{error}</Typography>}
+        {warning && <Typography data-testid="interest-rate-warning">{warning}</Typography>}
+        <Typography data-testid="monthly-payment">
+          Your monthly mortgage payment {numeral(monthPayment).format('$0,0.00')}
+        </Typography>
       </Box>
       
     </Box>

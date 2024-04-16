@@ -7,7 +7,7 @@ function AppRoutes() {
 
     return (
         <Routes>
-            <Route path='/' element={<Home/>} />
+            <Route path='/' element={<Home/>}  exact/>
             <Route 
                 path='/calc'
                 element={<Calc />}
@@ -18,7 +18,6 @@ function AppRoutes() {
                     <Banks />
                 }
             />
-           
         </Routes>
     )
 }
