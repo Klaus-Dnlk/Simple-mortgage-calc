@@ -1,6 +1,6 @@
 import { AppBar, Toolbar, Button } from '@mui/material'
 import { Link, NavLink } from 'react-router-dom'
-import Routes from './routes'
+import AppRoutes from './routes'
 import './App.css'
 
 function App() {
@@ -20,7 +20,7 @@ function App() {
         </Toolbar>
       </AppBar>
 
-      <Routes />
+      <AppRoutes />
     </div>
   )
 }
