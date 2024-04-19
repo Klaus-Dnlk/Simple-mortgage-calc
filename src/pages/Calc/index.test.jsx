@@ -10,7 +10,6 @@ import Calc from './Calc';
 const middlewares = [thunk];
 const mockStore = configureMockStore(middlewares);
 
-// This is a simplified example; adjust according to your actual initial state and reducers
 const initialState = {
   banks: {
     isLoading: false,
@@ -20,7 +19,6 @@ const initialState = {
   }
 };
 
-// Helper function to render the component with redux store
 const renderWithProviders = (ui, { reduxState } = {}) => {
   const store = mockStore(reduxState || initialState);
   return render(<Provider store={store}>{ui}</Provider>);
@@ -34,16 +32,12 @@ describe('Calc Component', () => {
 
   test('changing the bank dropdown sets the bank values correctly', () => {
     renderWithProviders(<Calc />);
-    fireEvent.mouseDown(screen.getByLabelText(/Bank name/)); // Open select dropdown
-    fireEvent.click(screen.getByText(/Test Bank/)); // Click on a menu item
+    fireEvent.mouseDown(screen.getByLabelText(/Bank name/)); 
+    fireEvent.click(screen.getByText(/Test Bank/)); 
 
     expect(screen.getByLabelText(/Initial Loan/i).value).toBe('500000');
   });
 
-  // Continue with other tests as needed, following the same pattern.
-  // Assuming continued from the previous setup
-  
-  // Input Value Changes
   test('input fields update their state on change', () => {
       renderWithProviders(<Calc />);
       const initialLoanInput = screen.getByLabelText(/Initial Loan/i);
@@ -51,24 +45,20 @@ describe('Calc Component', () => {
       expect(initialLoanInput.value).toBe('300000');
     });
     
-    // Calculate Button Functionality
     test('calculate button calculates monthly payment correctly', async () => {
       renderWithProviders(<Calc />);
-      // Assuming you have a form or a submit button to trigger the calculation
       const calculateButton = screen.getByRole('button', { name: /Calculate/i });
       fireEvent.click(calculateButton);
     
-      // Wait for the monthly payment to be calculated and displayed
       const monthlyPaymentDisplay = await screen.findByTestId('monthly-payment');
       expect(monthlyPaymentDisplay).toBeInTheDocument();
-      expect(monthlyPaymentDisplay).toHaveTextContent(/\$\d/); // This regex should be adjusted based on the expected format
+      expect(monthlyPaymentDisplay).toHaveTextContent(/\$\d/); 
     });
     
-    // Error Handling for Invalid APR
     test('displays error for invalid APR', () => {
       renderWithProviders(<Calc />);
       const aprInput = screen.getByLabelText(/APR/i);
-      fireEvent.change(aprInput, { target: { value: '105' } }); // Set an invalid APR
+      fireEvent.change(aprInput, { target: { value: '105' } }); 
     
       const calculateButton = screen.getByRole('button', { name: /Calculate/i });
       fireEvent.click(calculateButton);
@@ -77,11 +67,10 @@ describe('Calc Component', () => {
       expect(errorMessage).toHaveTextContent('Invalid interest rate');
     });
     
-    // Warning for High APR
     test('displays warning for high APR', () => {
       renderWithProviders(<Calc />);
       const aprInput = screen.getByLabelText(/APR/i);
-      fireEvent.change(aprInput, { target: { value: '16' } }); // Set a high but valid APR
+      fireEvent.change(aprInput, { target: { value: '16' } }); 
     
       const calculateButton = screen.getByRole('button', { name: /Calculate/i });
       fireEvent.click(calculateButton);
@@ -90,27 +79,21 @@ describe('Calc Component', () => {
       expect(warningMessage).toHaveTextContent('Consider negotiating for a better rate');
     });
     
-    // Reset Functionality
     test('reset button clears the form', () => {
       renderWithProviders(<Calc />);
-      // Assuming values are already set, simulate a reset
       const resetButton = screen.getByTestId('reset');
       fireEvent.click(resetButton);
     
-      // After reset, values should be empty or default
       expect(screen.getByLabelText(/Initial Loan/i).value).toBe('');
       expect(screen.getByLabelText(/Down Payment/i).value).toBe('');
-      // Continue asserting for other fields...
     });
     
-    // Fetching Banks on Mount
     test('fetches banks when the component is mounted', () => {
       const store = mockStore(initialState);
       store.dispatch = jest.fn();
     
       renderWithProviders(<Calc />, { reduxState: initialState });
     
-      // Assuming the fetchBanks operation is dispatched on mount
       expect(store.dispatch).toHaveBeenCalledTimes(1);
     });
 });
