@@ -18,7 +18,6 @@ const style = {
 
 function AddBankModal() {
   const [open, setOpen] = React.useState(true);
-  // const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
   return (
@@ -33,7 +32,7 @@ function AddBankModal() {
           <Typography id="modal-modal-title" variant="h6" component="h3" sx={{ textAlign: 'center' }}>
             New bank card
           </Typography>
-          <NewBankCard/>
+          <NewBankCard onCloseModal={handleClose}/>
         </Box>
       </Modal>
     </div>

@@ -95,7 +95,7 @@ function NewBankCard({ onCloseModal }) {
     return (
         <Box sx={{ display: 'flex', flexDirection: 'column' }}>
             <FormControl sx={{ mt: 2 }}>
-                <InputLabel htmlFor="my-input">Bank name</InputLabel>
+                <InputLabel htmlFor={bankId}>Bank name</InputLabel>
                 <Input 
                 type='text'
                 name='BankName'
@@ -156,7 +156,7 @@ function NewBankCard({ onCloseModal }) {
                 sx={{ mt: 2, mx: 'auto', width: 300,  height: 50 }}
                 onClick={handleSubmit}
             >
-             Add Bank   
+             Add Bank
             </Button>
           
         </Box>
