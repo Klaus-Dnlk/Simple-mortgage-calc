@@ -24,19 +24,12 @@ describe('NewBankCard Component', () => {
     it('some test', () => {
         renderedComponent()
     })
-//   beforeEach(() => {
-//     store = mockEmptyStore({
-//       banks: {
-//         bankList: []
-//       }
-//     });
-//   });
+//  
 
   it('renders NewBankCard component with name', () => {
     renderedComponent()
   
-    const buttonElement = screen.getByText(/Add Bank/i); // Adjust based on your button's text
-    expect(buttonElement).toBeInTheDocument();
+    const buttonElement = screen.getByText(/Add Bank/i);
   });
 
   it('renders NewBankCard component with input and button', () => {
