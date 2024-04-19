@@ -115,7 +115,7 @@ describe('BankCard Component with API call', () => {
     const mockedResponse = { data: [{ id: '1', name: 'Mock Bank' }] };
     axios.get.mockResolvedValueOnce(mockedResponse);
 
-    const { getByText, findByText } = render(<NewBankCard />);
+    render(<NewBankCard />);
 
     await screen.findByText('Mock Bank');
   });
@@ -125,7 +125,7 @@ describe('Async operations in BankCard Component', () => {
   test('handles loading state correctly', async () => {
     axios.get.mockResolvedValueOnce({ data: [{ id: '1', name: 'Async Bank' }] });
 
-    const { getByTestId } = render(<NewBankCard />);
+    render(<NewBankCard />);
 
     expect(screen.getByTestId('loading')).toHaveTextContent('Loading...');
     await waitFor(() => expect(screen.getByTestId('loading')).toBeEmptyDOMElement());
