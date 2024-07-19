@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loan Interest Calculator</title>
+</head>
+<body>
+    <h1>Loan Interest Calculator</h1>
+    <form id="loan-form">
+        <label for="bankName">Bank Name:</label>
+        <input type="text" id="bankName" required><br>
+
+        <label for="principal">Loan Amount:</label>
+        <input type="number" id="principal" required><br>
+        
+        <label for="rate">Annual Interest Rate (%):</label>
+        <input type="number" id="rate" required><br>
+        
+        <label for="years">Loan Term (years):</label>
+        <input type="number" id="years" required><br>
+        
+        <label for="downPayment">Down Payment:</label>
+        <input type="number" id="downPayment" required><br>
+        
+        <button type="submit">Calculate</button>
+    </form>
+    
+    <h2>Monthly Payment: <span id="monthly-payment"></span></h2>
+    <h2>Total Payment: <span id="total-payment"></span></h2>
+    <h2>Total Interest: <span id="total-interest"></span></h2>
+    <div id="amortization-schedule"></div>
+
+    <script src="calculator.js"></script>
+</body>
+</html>
