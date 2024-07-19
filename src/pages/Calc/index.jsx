@@ -61,7 +61,7 @@ function Calc() {
     let monthlyInterest = loanApr / 100 / 12
     let monthPayment = ((principal * monthlyInterest) * Math.pow((1  + monthlyInterest), loanTerm*12))/(Math.pow(1 + monthlyInterest, loanTerm*12) - 1)
     setMonthPayment(monthPayment)     
-        
+
   }
 
   const filingForm = (value) => {

@@ -112,7 +112,6 @@ function NewBankCard({ onCloseModal }) {
                 name='MaximumLoan'
                 value={MaximumLoan}
                 onChange={handleChange} 
-                onKeyPress={handleKeyPress}
                 />
                 
             </FormControl>
@@ -124,7 +123,6 @@ function NewBankCard({ onCloseModal }) {
                 name='MinimumDownPayment'
                 value={MinimumDownPayment}
                 onChange={handleChange} 
-                onKeyPress={handleKeyPress}
                 />
                 
             </FormControl>
@@ -136,7 +134,6 @@ function NewBankCard({ onCloseModal }) {
                 name='LoanTerm'
                 value={LoanTerm}
                 onChange={handleChange} 
-                onKeyPress={handleKeyPress}
                 />
             </FormControl>
 
@@ -147,7 +144,6 @@ function NewBankCard({ onCloseModal }) {
                 name='InterestRate'
                 value={InterestRate}
                 onChange={handleChange} 
-                onKeyPress={handleKeyPress}
                 />
             </FormControl>
             <Button 
