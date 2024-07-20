@@ -45,6 +45,8 @@ class InputValidator {
         const rateRegex = /^(?:[1-9][0-9]?|99)$/;
         const yearsRegex = /^(?:[1-9]|[1-4][0-9]|50)$/;
         const bankNameRegex = /^[A-Z][a-zA-Z0-9\s]{0,49}$/;
+        const downPaymentRegex = /^\d+$/;
+        const principalRegex = /^[1-9]\d{3,5}(?:000|[0-9]{0,2})$/;
 
         if (!rateRegex.test(rate)) {
             alert("Interest rate must be between 1 and 99 percent.");
@@ -58,6 +60,16 @@ class InputValidator {
 
         if (!bankNameRegex.test(bankName)) {
             alert("Bank name must start with a capital letter, can contain letters and numbers (not at the start), and be up to 50 characters long.");
+            return false;
+        }
+
+        if (!downPaymentRegex.test(downPayment) || downPayment < 0.1 * principal) {
+            alert("Down payment must be a number and not less than 10% of the principal.");
+            return false;
+        }
+        
+        if (!principalRegex.test(principal) || principal < 1000 || principal > 1000000) {
+            alert("Principal must be an integer between 1000 and 1000000.");
             return false;
         }
 

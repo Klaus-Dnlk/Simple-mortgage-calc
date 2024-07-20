@@ -17,6 +17,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { banksOperations, banksSelectors } from '../../redux/banks';
 import { useSelector, useDispatch } from 'react-redux';
 import numeral from 'numeral';
+import 'parsleyjs';
 
 
 
@@ -34,6 +35,8 @@ function Calc() {
   const [bankValue, setBankValue] = useState('');
   const [error, setError] = useState('');
   const [warning, setWarning] = useState('');
+
+  
 
 
 

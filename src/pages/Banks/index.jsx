@@ -31,9 +31,19 @@ function Banks() {
     dispatch(banksOperations.fetchBanks());
 
     const fetchIndexedDBBanks = async () => {
-      const db = await openDB('banksDB', 1);
-      const allBanks = await db.getAll('banks');
-      setIndexedDBBanks(allBanks);
+      const db = await openDB('banksDB', 1, {
+        upgrade(db) {
+          if (!db.objectStoreNames.contains('banks')) {
+            db.createObjectStore('banks', { keyPath: 'BankName' });
+          }
+        }
+      });
+      try {
+        const allBanks = await db.getAll('banks');
+        setIndexedDBBanks(allBanks);
+      } catch (error) {
+        console.error('Error fetching banks from IndexedDB', error);
+      }
     }
 
     fetchIndexedDBBanks();

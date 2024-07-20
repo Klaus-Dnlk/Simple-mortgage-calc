@@ -6,7 +6,7 @@ import * as yup from "yup";
 import { v4 as uuidv4 } from 'uuid';
 import { getAllBanks } from '../../redux/banks/banks-selectors'
 import banksOperations from '../../redux/banks/banks-operations';
-import { openDB } from 'idb'
+import { openDB } from 'idb';
 
 const validationSchema = yup.object({
     BankName: yup.string().matches(/^[A-Z]/, 'capital letter').required('Bank name is required'),

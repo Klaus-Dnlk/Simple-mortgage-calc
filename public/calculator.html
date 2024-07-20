@@ -4,24 +4,25 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Loan Interest Calculator</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/parsley.js/2.9.2/parsley.css" integrity="sha512-ycsBvJ9qPChmdIXi3aA/O21RH0o6IP2LhwnCB3fPyHjIVXE8tn+RJt6gqGFIkvFY/7LZyHLUPGJ1eR5P6asJpQ==" crossorigin="anonymous" />
 </head>
 <body>
     <h1>Loan Interest Calculator</h1>
-    <form id="loan-form">
+    <form id="loan-form" data-parsley-validate>
         <label for="bankName">Bank Name:</label>
-        <input type="text" id="bankName" required><br>
+        <input type="text" id="bankName" required data-parsley-trigger="change"><br>
 
         <label for="principal">Loan Amount:</label>
-        <input type="number" id="principal" required><br>
+        <input type="number" id="principal" required data-parsley-type="number" data-parsley-trigger="change"><br>
         
         <label for="rate">Annual Interest Rate (%):</label>
-        <input type="number" id="rate" required><br>
+        <input type="number" id="rate" required data-parsley-type="number" data-parsley-trigger="change"><br>
         
         <label for="years">Loan Term (years):</label>
-        <input type="number" id="years" required><br>
+        <input type="number" id="years" required data-parsley-type="number" data-parsley-trigger="change"><br>
         
         <label for="downPayment">Down Payment:</label>
-        <input type="number" id="downPayment" required><br>
+        <input type="number" id="downPayment" required data-parsley-type="number" data-parsley-trigger="change"><br>
         
         <button type="submit">Calculate</button>
     </form>
@@ -31,6 +32,8 @@
     <h2>Total Interest: <span id="total-interest"></span></h2>
     <div id="amortization-schedule"></div>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-KyZXEAg3QhqLMpG8r+Knujsl5+5hb7O+9Orl7fYh1uOp2RwW3q0v5Jf5lRzhr0nR5lRIg7QGxP1lKm1uY9xKBg==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/parsley.js/2.9.2/parsley.min.js" integrity="sha512-X7fuNsngBlMA/Nh2cp5Fi1TTIcp7nbFZdrjKLecnuQgDeyqvFxIOOZ5Qm5O7lKcGCVvK8m+szkE3cXFOA9STkA==" crossorigin="anonymous"></script>
     <script src="calculator.js"></script>
 </body>
 </html>
