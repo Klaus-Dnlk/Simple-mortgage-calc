@@ -6,6 +6,7 @@ import * as yup from "yup";
 import { v4 as uuidv4 } from 'uuid';
 import { getAllBanks } from '../../redux/banks/banks-selectors'
 import banksOperations from '../../redux/banks/banks-operations';
+import { openDB } from 'idb'
 
 const validationSchema = yup.object({
     BankName: yup.string().matches(/^[A-Z]/, 'capital letter').required('Bank name is required'),
@@ -62,7 +63,10 @@ function NewBankCard({ onCloseModal }) {
                 if(repeatName(BankName)) {
                     alert(`${BankName} is already exist`)
                 } else {
+                    const newBank = { BankName, MaximumLoan, MinimumDownPayment, LoanTerm, InterestRate };
+
                     dispatch(banksOperations.addNewBank({ BankName, MaximumLoan, MinimumDownPayment, LoanTerm, InterestRate }))
+                    await saveToIndexedDB(newBank)
                     onCloseModal(false)
                     reset()
                 }
@@ -72,6 +76,18 @@ function NewBankCard({ onCloseModal }) {
                 }
         }
     }
+
+    const saveToIndexedDB = async (newBank) => {
+        const db = await openDB('banksDB', 1, {
+            upgrade(db) {
+                if(!db.objectStoreNames.contains('banks')) {
+                    db.createObjectStore('banks', { keyPath: 'BankName' });
+                }
+            },
+        });
+
+        await db.put('banks', newBank);
+    };
 
     const reset  = () => {
         setName('')

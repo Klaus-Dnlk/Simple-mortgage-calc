@@ -1,21 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
-import Box from '@mui/material/Box';
+import { Document, Packer, Paragraph, Table as DocTable, TableCell as DocTableCell, TableRow as DocTableRow } from 'docx'
+import { openDB } from 'idb'
+import { Typography, Button } from '@mui/material';
 import {Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
-import Paper from '@mui/material/Paper';
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import Box from '@mui/material/Box';
 import CircularProgress from '@mui/material/CircularProgress';
 import DeleteIcon from '@mui/icons-material/Delete';
 import IconButton from '@mui/material/IconButton';
-import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import jsPDF from 'jspdf';
+import Paper from '@mui/material/Paper';
 import Tooltip from '@mui/material/Tooltip';
-import { Typography, Button } from '@mui/material';
 
 import { banksOperations, banksSelectors } from '../../redux/banks';
 import AddBankModal from '../Modal';
 
-import { Document, Packer, Paragraph, Table as DocTable, TableCell as DocTableCell, TableRow as DocTableRow } from 'docx'
-import jsPDF from 'jspdf';
 
 
 function Banks() {
@@ -24,12 +25,21 @@ function Banks() {
   const isLoading = useSelector(banksSelectors.getLoading);
 
   const [showModal, setShowModal] = useState(false)
-
-
+  const [indexedDBBanks, setIndexedDBBanks] = useState([])
 
   useEffect(() => {
     dispatch(banksOperations.fetchBanks());
+
+    const fetchIndexedDBBanks = async () => {
+      const db = await openDB('banksDB', 1);
+      const allBanks = await db.getAll('banks');
+      setIndexedDBBanks(allBanks);
+    }
+
+    fetchIndexedDBBanks();
   }, [dispatch]);
+
+  const allBanks = [...banks, ...indexedDBBanks];
 
   const handleOpen = () => {
     setShowModal(true);     
@@ -134,9 +144,9 @@ function Banks() {
               </TableRow>
             </TableHead>
             
-            {banks.length > 0 && (
+            {allBanks.length > 0 && (
               <TableBody>
-                {banks.map(({ id, BankName, InterestRate, MaximumLoan, MinimumDownPayment, LoanTerm }) => (
+                {allBanks.map(({ id, BankName, InterestRate, MaximumLoan, MinimumDownPayment, LoanTerm }) => (
                   <TableRow
                   key={id}
                   sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
