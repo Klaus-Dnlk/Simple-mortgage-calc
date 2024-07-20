@@ -1,4 +1,4 @@
-import * as React from 'react'
+import React, { useState }  from 'react'
 import Box from '@mui/material/Box';
 import { FormControl, InputLabel, Input, Button } from '@mui/material';
 import { useSelector, useDispatch } from 'react-redux';
@@ -17,11 +17,11 @@ const validationSchema = yup.object({
 
 function NewBankCard({ onCloseModal }) {
 
-    const [BankName, setName] = React.useState('')
-    const [MaximumLoan, setLoan] = React.useState('')
-    const [MinimumDownPayment, setDwnPay] = React.useState('')
-    const [LoanTerm, setTerm] = React.useState('')
-    const [InterestRate, setRate] = React.useState('')    
+    const [BankName, setName] = useState('')
+    const [MaximumLoan, setLoan] = useState('')
+    const [MinimumDownPayment, setDwnPay] = useState('')
+    const [LoanTerm, setTerm] = useState('')
+    const [InterestRate, setRate] = useState('')    
 
     const banks = useSelector(getAllBanks)
     const dispatch = useDispatch()
@@ -51,28 +51,25 @@ function NewBankCard({ onCloseModal }) {
             }
         }    
 
-    const handleSubmit = e => {
+    const handleSubmit = async e => {
         e.preventDefault()
 
         const repeatName = name => 
         banks.find(e => e.BankName.toLowerCase() === name.toLowerCase())
         try {
-            const validData = validationSchema.validate({ BankName, MaximumLoan, MinimumDownPayment, LoanTerm, InterestRate }, { abortEarly: false });
-            if(repeatName(BankName)) {
-                alert(`${BankName} is already exist`)
-            } else {
-                dispatch(banksOperations.addNewBank(validData))
+            await validationSchema.validate({ BankName, MaximumLoan, MinimumDownPayment, LoanTerm, InterestRate }, { abortEarly: false });
 
-            }
-            onCloseModal(false)
-            reset()
-            
+                if(repeatName(BankName)) {
+                    alert(`${BankName} is already exist`)
+                } else {
+                    dispatch(banksOperations.addNewBank({ BankName, MaximumLoan, MinimumDownPayment, LoanTerm, InterestRate }))
+                    onCloseModal(false)
+                    reset()
+                }
             } catch (error) {
                 if (error instanceof yup.ValidationError) {
                     alert(error.errors[0]);
-                    return;
                 }
-                throw Error(error)
         }
     }
 
@@ -83,14 +80,6 @@ function NewBankCard({ onCloseModal }) {
         setTerm('')
         setRate('')
     }
-
-    const handleKeyPress = (event) => {
-        const regex = /[0-9]/;
-      
-        if (!regex.test(event.key)) {
-          event.preventDefault();
-        }
-      };
 
     return (
         <Box sx={{ display: 'flex', flexDirection: 'column' }}>
@@ -112,7 +101,6 @@ function NewBankCard({ onCloseModal }) {
                 name='MaximumLoan'
                 value={MaximumLoan}
                 onChange={handleChange} 
-                onKeyPress={handleKeyPress}
                 />
                 
             </FormControl>
@@ -124,7 +112,6 @@ function NewBankCard({ onCloseModal }) {
                 name='MinimumDownPayment'
                 value={MinimumDownPayment}
                 onChange={handleChange} 
-                onKeyPress={handleKeyPress}
                 />
                 
             </FormControl>
@@ -136,7 +123,6 @@ function NewBankCard({ onCloseModal }) {
                 name='LoanTerm'
                 value={LoanTerm}
                 onChange={handleChange} 
-                onKeyPress={handleKeyPress}
                 />
             </FormControl>
 
@@ -147,7 +133,6 @@ function NewBankCard({ onCloseModal }) {
                 name='InterestRate'
                 value={InterestRate}
                 onChange={handleChange} 
-                onKeyPress={handleKeyPress}
                 />
             </FormControl>
             <Button 
