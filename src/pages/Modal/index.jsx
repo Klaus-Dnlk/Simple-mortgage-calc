@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useState } from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
@@ -9,19 +9,21 @@ const style = {
   top: '50%',
   left: '50%',
   transform: 'translate(-50%, -50%)',
-  width: 400,
+  width: 600,
+  height: 400,
+
   bgcolor: 'background.paper',
   border: '2px solid #000',
   boxShadow: 24,
   p: 4,
+  overflow: 'auto',
 };
 
-function AddBankModal({ onClose }) {
-  const [open, setOpen] = React.useState(true);
+function AddModal({ onClose, title, children }) {
+  const [open, setOpen] = useState(true);
   const handleClose = () => setOpen(false);
 
   return (
-    <div>
       <Modal
         open={open}
         onClose={onClose}
@@ -30,14 +32,14 @@ function AddBankModal({ onClose }) {
       >
         <Box sx={style}>
           <Typography id="modal-modal-title" variant="h6" component="h3" sx={{ textAlign: 'center' }}>
-            New bank card
+            {title}
           </Typography>
-          <NewBankCard onCloseModal={handleClose}/>
+          {children}
+          
         </Box>
       </Modal>
-    </div>
   );
 }
 
 
-export default AddBankModal
+export default AddModal

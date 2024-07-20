@@ -1,5 +1,8 @@
+import React, { useEffect } from 'react';
 import { AppBar, Toolbar, Button } from '@mui/material'
 import { Link, NavLink } from 'react-router-dom'
+
+import ContentDisplay from './components/ContentDisplay';
 import AppRoutes from './routes'
 import './App.css'
 import CookiesBanner from './components/CookiesBanner'
@@ -7,6 +10,14 @@ import CookiesBanner from './components/CookiesBanner'
 const cookies = document.cookie
 console.log("cookies", cookies);
 function App() {
+
+  useEffect(() => {
+    if(!document.cookie.includes("userConsent=accepted")) {
+      new CookiesBanner()
+    }
+  }, [])
+
+
   return (
     <div sx={{ flexGrow: 1 }}>
       <AppBar position='static'>
@@ -22,7 +33,7 @@ function App() {
           </Button>
         </Toolbar>
       </AppBar>
-      {!document.cookie && <CookiesBanner />}
+      <ContentDisplay/>
       <AppRoutes />
     </div>
   )

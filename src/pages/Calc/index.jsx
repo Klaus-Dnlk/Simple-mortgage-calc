@@ -10,14 +10,17 @@ import {
   IconButton, 
   Tooltip, 
   MenuItem, 
-  Select  
+  Select, 
+  Switch
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 
-import { banksOperations, banksSelectors } from '../../redux/banks';
 import { useSelector, useDispatch } from 'react-redux';
 import numeral from 'numeral';
 import 'parsleyjs';
+
+import { banksOperations, banksSelectors } from '../../redux/banks';
+import CalculatorIframe from '../../components/IframeComponent';
 
 
 
@@ -35,9 +38,7 @@ function Calc() {
   const [bankValue, setBankValue] = useState('');
   const [error, setError] = useState('');
   const [warning, setWarning] = useState('');
-
-  
-
+  const [isChecked, setIsChecked] = useState(true)
 
 
   useEffect(() => {
@@ -57,8 +58,6 @@ function Calc() {
       setError('');
       setWarning('');
     }
-
-    // Calculation
     
     let principal = initialLoan
     let monthlyInterest = loanApr / 100 / 12
@@ -91,83 +90,99 @@ function Calc() {
     setWarning('');
   }  
 
+  const handleSwitchChange = ( e) => {
+    setIsChecked(e.target.checked)
+  }
+
   return (
-  <Box>
-    <Box sx={{ m: 5 }}>
-     <FormControl fullWidth sx={{ mb: 5 }}>
-        <InputLabel id="selectBank">Bank name</InputLabel>
-        <Select
-          labelId="selectBank"
-          id="demo-simple-select"
-          value={bankValue}
-          label="Bank name"
-          onChange={handleChange}>
-            {banks.map(({ id, BankName }) => (
-              <MenuItem key={id} value={BankName}>{BankName}</MenuItem>  
-            ))}
-        </Select>
-      </FormControl>
-      <Box sx={{ display: 'flex', mx: 'auto', width: 800 }}>
-        <FormControl>
-          <InputLabel>Initial Loan</InputLabel>
-          <OutlinedInput 
-            value={initialLoan}
-            onChange={(e) => setInitialLoan(e.target.value)}
-            type="text"
-          />
-        </FormControl>
+  <>
+    <Switch 
+      checked={isChecked} 
+      onChange={handleSwitchChange} 
+      inputProps={{ 'aria-label': 'controlled' }}
+    />
+    {!isChecked ? (
+      <CalculatorIframe />
+    ) : (
+          <Box>
+          <Box sx={{ m: 5 }}>
+          <FormControl fullWidth sx={{ mb: 5 }}>
+              <InputLabel id="selectBank">Bank name</InputLabel>
+              <Select
+                labelId="selectBank"
+                id="demo-simple-select"
+                value={bankValue}
+                label="Bank name"
+                onChange={handleChange}>
+                  {banks.map(({ id, BankName }) => (
+                    <MenuItem key={id} value={BankName}>{BankName}</MenuItem>  
+                  ))}
+              </Select>
+            </FormControl>
+            <Box sx={{ display: 'flex', mx: 'auto', width: 800 }}>
+              <FormControl>
+                <InputLabel>Initial Loan</InputLabel>
+                <OutlinedInput 
+                  value={initialLoan}
+                  onChange={(e) => setInitialLoan(e.target.value)}
+                  type="text"
+                />
+              </FormControl>
 
-        <FormControl>
-          <InputLabel>Down Payment</InputLabel>
-            <OutlinedInput 
-            value={downPayment}
-              onChange={(e) => setDownPayment(e.target.value)}
-              type="text"
-            />
-        </FormControl>
+              <FormControl>
+                <InputLabel>Down Payment</InputLabel>
+                  <OutlinedInput 
+                  value={downPayment}
+                    onChange={(e) => setDownPayment(e.target.value)}
+                    type="text"
+                  />
+              </FormControl>
 
-        <FormControl>
-          <InputLabel>Loan Term (m)</InputLabel>
-          <OutlinedInput 
-            value={loanTerm}
-            onChange={(e) => setLoanTerm(e.target.value)}
-            type="text"
-          />
-        </FormControl>
+              <FormControl>
+                <InputLabel>Loan Term (m)</InputLabel>
+                <OutlinedInput 
+                  value={loanTerm}
+                  onChange={(e) => setLoanTerm(e.target.value)}
+                  type="text"
+                />
+              </FormControl>
 
-        <FormControl>
-          <InputLabel>APR (%)</InputLabel>
-          <OutlinedInput 
-          value={loanApr}
-            onChange={(e) => setLoanApr(e.target.value)}
-            type="text"
-          />
-        </FormControl>
-      </Box>
-      
-      <Box sx={{ display: 'flex', mx: 'auto', mt: 3, width: 350 }}>
-      <Button variant='contained' onClick={submitCalc}>Calculate</Button>
-        <Tooltip title="Clear">
-          <IconButton onClick={reset} data-testid="reset">
-            <DeleteIcon />
-          </IconButton>
-        </Tooltip>
-        {error && <Typography data-testid="calc-error">{error}</Typography>}
-        {warning && <Typography data-testid="interest-rate-warning">{warning}</Typography>}
-        <Typography data-testid="monthly-payment">
-          Your monthly mortgage payment {numeral(monthPayment).format('$0,0.00')}
-        </Typography>
-      </Box>
-      
-    </Box>
+              <FormControl>
+                <InputLabel>APR (%)</InputLabel>
+                <OutlinedInput 
+                value={loanApr}
+                  onChange={(e) => setLoanApr(e.target.value)}
+                  type="text"
+                />
+              </FormControl>
+            </Box>
+            
+            <Box sx={{ display: 'flex', mx: 'auto', mt: 3, width: 350 }}>
+            <Button variant='contained' onClick={submitCalc}>Calculate</Button>
+              <Tooltip title="Clear">
+                <IconButton onClick={reset} data-testid="reset">
+                  <DeleteIcon />
+                </IconButton>
+              </Tooltip>
+              {error && <Typography data-testid="calc-error">{error}</Typography>}
+              {warning && <Typography data-testid="interest-rate-warning">{warning}</Typography>}
+              <Typography data-testid="monthly-payment">
+                Your monthly mortgage payment {numeral(monthPayment).format('$0,0.00')}
+              </Typography>
+            </Box>
+            
+          </Box>
 
-    <Box sx={{ display: 'flex',  mx: 'auto' }}>
-          <Paper elevation={3} sx={{ display: 'flex',  mx: 'auto', width: 600, height: 128 }}>
-            <Typography sx={{ display: 'flex', mx: 'auto', my: 'auto', fontSize: 22 }}>
-               Your monthly mortgage payment {numeral(monthPayment).format('$0,0.00')}</Typography>
-          </Paper>
-    </Box>
-  </Box>
+          <Box sx={{ display: 'flex',  mx: 'auto' }}>
+                <Paper elevation={3} sx={{ display: 'flex',  mx: 'auto', width: 600, height: 128 }}>
+                  <Typography sx={{ display: 'flex', mx: 'auto', my: 'auto', fontSize: 22 }}>
+                    Your monthly mortgage payment {numeral(monthPayment).format('$0,0.00')}</Typography>
+                </Paper>
+          </Box>
+        </Box>
+    )}
+        
+  </>
   );
 }
 

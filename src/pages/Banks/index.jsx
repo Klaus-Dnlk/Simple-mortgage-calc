@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
 import { Document, Packer, Paragraph, Table as DocTable, TableCell as DocTableCell, TableRow as DocTableRow } from 'docx'
-import { openDB } from 'idb'
 import { Typography, Button } from '@mui/material';
 import {Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
@@ -15,7 +14,12 @@ import Paper from '@mui/material/Paper';
 import Tooltip from '@mui/material/Tooltip';
 
 import { banksOperations, banksSelectors } from '../../redux/banks';
-import AddBankModal from '../Modal';
+import { openDB, getAllBanks } from '../../service/indexedDBService';
+import AddModal from '../Modal';
+import NewBankCard from '../../components/BankCard';
+import CurrencyRates from '../../components/CurrencyRates';
+import ContentDisplay from '../../components/ContentDisplay';
+
 
 
 
@@ -24,13 +28,12 @@ function Banks() {
   const dispatch = useDispatch();
   const isLoading = useSelector(banksSelectors.getLoading);
 
-  const [showModal, setShowModal] = useState(false)
+  const [showAddBankModal, setShowAddBankModal] = useState(false)
+  const [showCurrenciesModal, setShowCurrenciesModal] = useState(false)
   const [indexedDBBanks, setIndexedDBBanks] = useState([])
 
-  useEffect(() => {
-    dispatch(banksOperations.fetchBanks());
-
-    const fetchIndexedDBBanks = async () => {
+  const fetchIndexedDBBanks = useCallback(async () => {
+    try {
       const db = await openDB('banksDB', 1, {
         upgrade(db) {
           if (!db.objectStoreNames.contains('banks')) {
@@ -38,25 +41,30 @@ function Banks() {
           }
         }
       });
-      try {
-        const allBanks = await db.getAll('banks');
-        setIndexedDBBanks(allBanks);
-      } catch (error) {
-        console.error('Error fetching banks from IndexedDB', error);
-      }
+      const allBanks = await getAllBanks('banks');
+      setIndexedDBBanks(allBanks);
+    } catch (error) {
+      console.error('Error fetching banks from IndexedDB', error)
     }
+  }, [])
 
+  useEffect(() => {
+    dispatch(banksOperations.fetchBanks());
     fetchIndexedDBBanks();
-  }, [dispatch]);
+  }, [dispatch, fetchIndexedDBBanks]);
 
   const allBanks = [...banks, ...indexedDBBanks];
 
   const handleOpen = () => {
-    setShowModal(true);     
+    setShowAddBankModal(true);     
+   };
+
+  const handleCurrencyModalOpen = () => {
+    setShowCurrenciesModal(true);     
    };
 
    const handleClose = () => {
-    setShowModal(false);
+    setShowAddBankModal(false);
   };
 
   const generateDoc = () => {
@@ -129,15 +137,24 @@ function Banks() {
                 <AddCircleOutlineIcon color="primary"/>
                 <Typography color='primary'>Add new Bank</Typography>
               </IconButton>
-              <IconButton sx={{ m:2 }} onClick={handleOpen}>
+              <IconButton sx={{ m:2 }} onClick={handleCurrencyModalOpen}>
                 <Typography color='primary'>Currencies</Typography>
               </IconButton>
           </Box>
 
 
-          {showModal && <AddBankModal onClose={handleClose} />}
+          {showAddBankModal && (
+            <AddModal onClose={handleClose} title="Add new bank">
+                <NewBankCard onCloseModal={handleClose}/>
+            </AddModal>
+          )}
+          {showCurrenciesModal && (
+            <AddModal onClose={handleClose}>
+              <CurrencyRates/>
+            </AddModal>
+          )}
           {isLoading && 
-              <Box sx={{ display: 'flex' }}>
+            <Box sx={{ display: 'flex' }}>
               <CircularProgress />
             </Box>
             }  
@@ -189,7 +206,7 @@ function Banks() {
             Generate PDF
           </Button>
         </Box>
-
+        <ContentDisplay/>
         </>
       )
 }
