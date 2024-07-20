@@ -4,6 +4,8 @@ import {
     Typography 
 } from "@mui/material";
 
+import CalculatorIframe from "../../components/IframeComponent";
+
 
 function Home() {
     
@@ -22,6 +24,7 @@ function Home() {
                     </Typography>
                 </Grid>
             </Grid>
+        <CalculatorIframe />
         </Container>
     )
 }

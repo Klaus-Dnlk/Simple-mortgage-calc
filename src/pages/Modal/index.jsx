@@ -16,7 +16,7 @@ const style = {
   p: 4,
 };
 
-function AddBankModal() {
+function AddBankModal({ onClose }) {
   const [open, setOpen] = React.useState(true);
   const handleClose = () => setOpen(false);
 
@@ -24,7 +24,7 @@ function AddBankModal() {
     <div>
       <Modal
         open={open}
-        onClose={handleClose}
+        onClose={onClose}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >

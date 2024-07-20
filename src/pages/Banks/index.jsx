@@ -31,23 +31,28 @@ function Banks() {
   }, [dispatch]);
 
   const handleOpen = () => {
-    if(!showModal) {
-      setShowModal(true)
-      
-    } else {
-      setShowModal(false)
-    }      
+    setShowModal(true);     
    };
+
+   const handleClose = () => {
+    setShowModal(false);
+  };
 
   return (
         <>
-        <IconButton sx={{ m:2 }} 
+          <Box display="flex" justifyContent="space-between"  >
+              <IconButton sx={{ m:2 }} onClick={handleOpen}>
+                <AddCircleOutlineIcon color="primary"/>
+                <Typography color='primary'>Add new Bank</Typography>
+              </IconButton>
+              <IconButton sx={{ m:2 }} onClick={handleOpen}>
+                <AddCircleOutlineIcon color="primary"/>
+                <Typography color='primary'>Currencies</Typography>
+              </IconButton>
+          </Box>
 
-          onClick={handleOpen}>
-          <AddCircleOutlineIcon color="primary"/>
-          <Typography color='primary'>Add new Bank</Typography>
-        </IconButton>
-          {showModal && <AddBankModal />}
+
+          {showModal && <AddBankModal onClose={handleClose} />}
           {isLoading && 
               <Box sx={{ display: 'flex' }}>
               <CircularProgress />
