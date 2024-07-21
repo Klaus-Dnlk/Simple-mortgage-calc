@@ -1,14 +1,23 @@
 import React from 'react';
+import { string } from 'prop-types';
 import DOMPurify from 'dompurify';
 
-const ContentDisplay = () => {
-    
-    const potentiallyUnsafeHtml = "<img src='x' onerror='alert(1)' />"
-    const sanitizedHtml = DOMPurify.sanitize(potentiallyUnsafeHtml);
+const sanitizeHtml = (html) => {
+  return DOMPurify.sanitize(html);
+};
 
-  return (
-    <div dangerouslySetInnerHTML={{ __html: sanitizedHtml }}></div>
-  );
+const ContentDisplay = ({ html }) => {
+  const sanitizedHtml = sanitizeHtml(html);
+
+  return <div dangerouslySetInnerHTML={{ __html: sanitizedHtml }}></div>;
 };
 
 export default ContentDisplay;
+
+ContentDisplay.propTypes = {
+  html: string,
+};
+
+ContentDisplay.defaultProps = {
+  html: '',
+};

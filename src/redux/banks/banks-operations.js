@@ -1,24 +1,24 @@
-import axios from 'axios'
-import { createAsyncThunk } from '@reduxjs/toolkit'
+import axios from 'axios';
+import { createAsyncThunk } from '@reduxjs/toolkit';
 
-axios.defaults.baseURL = 'https://625314acc534af46cb93846b.mockapi.io/api/'
+axios.defaults.baseURL = 'https://625314acc534af46cb93846b.mockapi.io/api/';
 export const fetchBanks = createAsyncThunk(
   'banks/fetchBanks',
   async (_, { rejectWithValue }) => {
     try {
-      const { data } = await axios.get('/banks')
-      return data
+      const { data } = await axios.get('/banks');
+      return data;
     } catch (error) {
-      return rejectWithValue(error)
+      return rejectWithValue(error);
     }
-  },
-)
+  }
+);
 
 export const addNewBank = createAsyncThunk(
   'banks/addNewBank',
   async (
     { BankName, MaximumLoan, MinimumDownPayment, LoanTerm, InterestRate },
-    { rejectWithValue },
+    { rejectWithValue }
   ) => {
     try {
       const { data } = await axios.post('/banks', {
@@ -27,29 +27,28 @@ export const addNewBank = createAsyncThunk(
         MinimumDownPayment,
         LoanTerm,
         InterestRate,
-      })
-      return data
+      });
+      return data;
     } catch (error) {
-      rejectWithValue(error)
+      rejectWithValue(error);
     }
-  },
-)
+  }
+);
 
 export const deleteBank = createAsyncThunk(
   'banks/deleteBank',
   async (bankId, { rejectWithValue }) => {
     try {
-      const { data } = await axios.delete(`/banks/${bankId}`)
-      return data.id
+      const { data } = await axios.delete(`/banks/${bankId}`);
+      return data.id;
     } catch (error) {
-      rejectWithValue(error)
+      rejectWithValue(error);
     }
-  },
-)
+  }
+);
 
-// eslint-disable-next-line import/no-anonymous-default-export
 export default {
   fetchBanks,
   addNewBank,
   deleteBank,
-}
+};

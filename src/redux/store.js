@@ -10,17 +10,19 @@ import {
 } from 'redux-persist';
 import banksReducer from './banks/banks-reducer';
 
+const isDev = process.env.REACT_APP_NODE_ENV === 'development';
+
 const store = configureStore({
   reducer: {
     banks: banksReducer,
   },
-  middleware: getDefaultMiddleware =>
+  middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: {
         ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
       },
     }).concat(logger),
-  devTools: process.env.NODE_ENV === 'development',
+  devTools: isDev,
 });
 
 export default store;
