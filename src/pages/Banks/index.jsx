@@ -4,85 +4,140 @@ import { useSelector, useDispatch } from 'react-redux';
 import { banksOperations, banksSelectors } from '../../redux/banks';
 import AddBankModal from '../Modal';
 
-import Box from '@mui/material/Box';
-import {Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
-import Paper from '@mui/material/Paper';
-import CircularProgress from '@mui/material/CircularProgress';
-
-// DEL BUTTON
-import DeleteIcon from '@mui/icons-material/Delete';
-import IconButton from '@mui/material/IconButton';
-import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
-import Tooltip from '@mui/material/Tooltip';
-import { Typography } from '@mui/material';
-
+import {
+  Box,
+  Table, 
+  TableBody, 
+  TableCell, 
+  TableContainer, 
+  TableHead, 
+  TableRow,
+  Paper,
+  CircularProgress,
+  DeleteIcon,
+  IconButton,
+  AddCircleOutlineIcon,
+  Tooltip,
+  Typography,
+  Alert,
+  Button
+} from '@mui/material';
 
 function Banks() {
   const banks = useSelector(banksSelectors.getAllBanks);
-  const dispatch = useDispatch();
   const isLoading = useSelector(banksSelectors.getLoading);
+  const error = useSelector(banksSelectors.getError);
+  const dispatch = useDispatch();
 
-  const [showModal, setShowModal] = React.useState(false)
-
-
+  const [showModal, setShowModal] = React.useState(false);
 
   useEffect(() => {
     dispatch(banksOperations.fetchBanks());
   }, [dispatch]);
 
-  const handleOpen = () => {
-    if(!showModal) {
-      setShowModal(true)
-      
-    } else {
-      setShowModal(false)
-    }      
-   };
+  const handleOpenModal = () => {
+    setShowModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+  };
+
+  const handleDeleteBank = (bankId) => {
+    if (window.confirm('Are you sure you want to delete this bank?')) {
+      dispatch(banksOperations.deleteBank(bankId));
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
+        <CircularProgress />
+      </Box>
+    );
+  }
 
   return (
-        <>
-        <IconButton sx={{ m:2 }} 
+    <Box sx={{ p: 3 }}>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+        <Typography variant="h4">
+          Banks Management
+        </Typography>
+        <Button
+          variant="contained"
+          startIcon={<AddCircleOutlineIcon />}
+          onClick={handleOpenModal}
+          size="large"
+        >
+          Add New Bank
+        </Button>
+      </Box>
 
-          onClick={handleOpen}>
-          <AddCircleOutlineIcon color="primary"/>
-          <Typography color='primary'>Add new Bank</Typography>
-        </IconButton>
-          {showModal && <AddBankModal />}
-          {isLoading && 
-              <Box sx={{ display: 'flex' }}>
-              <CircularProgress />
-            </Box>
-            }  
+      {error && (
+        <Alert severity="error" sx={{ mb: 3 }}>
+          Failed to load banks: {error}
+        </Alert>
+      )}
 
-        <TableContainer component={Paper}>
-          <Table sx={{ minWidth: 650 }} aria-label="simple table">
-            <TableHead sx={{ border: 2 }}>
-              <TableRow >
-                <TableCell sx={{ fontWeight: 'bold' }}>Bank name</TableCell>
-                <TableCell  sx={{ fontWeight: 'bold' }} align="right" >Interest rate&nbsp;(%)</TableCell>
-                <TableCell align="right" sx={{ fontWeight: 'bold' }}>Maximum loan&nbsp;($)</TableCell>
-                <TableCell align="right" sx={{ fontWeight: 'bold' }}>Minimum down payment&nbsp;($)</TableCell>
-                <TableCell align="right" sx={{ fontWeight: 'bold' }}>Loan term&nbsp;(m)</TableCell>
+      {showModal && (
+        <AddBankModal onCloseModal={handleCloseModal} />
+      )}
+
+      {banks.length === 0 && !isLoading ? (
+        <Paper sx={{ p: 4, textAlign: 'center' }}>
+          <Typography variant="h6" color="text.secondary">
+            No banks found. Add your first bank to get started.
+          </Typography>
+        </Paper>
+      ) : (
+        <TableContainer component={Paper} elevation={2}>
+          <Table sx={{ minWidth: 650 }} aria-label="banks table">
+            <TableHead>
+              <TableRow sx={{ backgroundColor: 'primary.main' }}>
+                <TableCell sx={{ fontWeight: 'bold', color: 'white' }}>
+                  Bank Name
+                </TableCell>
+                <TableCell sx={{ fontWeight: 'bold', color: 'white' }} align="right">
+                  Interest Rate (%)
+                </TableCell>
+                <TableCell sx={{ fontWeight: 'bold', color: 'white' }} align="right">
+                  Maximum Loan ($)
+                </TableCell>
+                <TableCell sx={{ fontWeight: 'bold', color: 'white' }} align="right">
+                  Minimum Down Payment ($)
+                </TableCell>
+                <TableCell sx={{ fontWeight: 'bold', color: 'white' }} align="right">
+                  Loan Term (years)
+                </TableCell>
+                <TableCell sx={{ fontWeight: 'bold', color: 'white' }} align="center">
+                  Actions
+                </TableCell>
               </TableRow>
             </TableHead>
             
-            {banks.length > 0 && (
-              <TableBody>
-                {banks.map(({ id, BankName, InterestRate, MaximumLoan, MinimumDownPayment, LoanTerm }) => (
-                  <TableRow
+            <TableBody>
+              {banks.map(({ id, BankName, InterestRate, MaximumLoan, MinimumDownPayment, LoanTerm }) => (
+                <TableRow
                   key={id}
-                  sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                  >
-                  <TableCell component="th" scope="e">
+                  sx={{ 
+                    '&:last-child td, &:last-child th': { border: 0 },
+                    '&:hover': { backgroundColor: 'action.hover' }
+                  }}
+                >
+                  <TableCell component="th" scope="row" sx={{ fontWeight: 'medium' }}>
                     {BankName}
                   </TableCell>
-                  <TableCell align="right">{InterestRate}</TableCell>
-                  <TableCell align="right">{MaximumLoan}</TableCell>
-                  <TableCell align="right">{MinimumDownPayment}</TableCell>
-                  <TableCell align="right">{LoanTerm}</TableCell>
-                  <TableCell>
-                    <Tooltip title="Delete">
-                      <IconButton onClick={() => dispatch(banksOperations.deleteBank(id))}>
+                  <TableCell align="right">{InterestRate}%</TableCell>
+                  <TableCell align="right">${MaximumLoan.toLocaleString()}</TableCell>
+                  <TableCell align="right">${MinimumDownPayment.toLocaleString()}</TableCell>
+                  <TableCell align="right">{LoanTerm} years</TableCell>
+                  <TableCell align="center">
+                    <Tooltip title="Delete bank">
+                      <IconButton 
+                        onClick={() => handleDeleteBank(id)}
+                        color="error"
+                        size="small"
+                      >
                         <DeleteIcon />
                       </IconButton>
                     </Tooltip>
@@ -90,11 +145,11 @@ function Banks() {
                 </TableRow>
               ))}
             </TableBody>
-            )}
           </Table>
         </TableContainer>
-        </>
-      )
+      )}
+    </Box>
+  );
 }
 
-export default Banks
+export default Banks;

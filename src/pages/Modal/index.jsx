@@ -2,7 +2,7 @@ import * as React from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
-import NewBankCard from '../../components/BankCard/index'
+import NewBankCard from '../../components/BankCard/index';
 
 const style = {
   position: 'absolute',
@@ -10,34 +10,43 @@ const style = {
   left: '50%',
   transform: 'translate(-50%, -50%)',
   width: 400,
+  maxWidth: '90vw',
   bgcolor: 'background.paper',
   border: '2px solid #000',
   boxShadow: 24,
   p: 4,
+  maxHeight: '90vh',
+  overflow: 'auto',
 };
 
-function AddBankModal() {
+function AddBankModal({ onCloseModal }) {
   const [open, setOpen] = React.useState(true);
-  const handleClose = () => setOpen(false);
+
+  const handleClose = () => {
+    setOpen(false);
+    onCloseModal();
+  };
 
   return (
-    <div>
-      <Modal
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
-        <Box sx={style}>
-          <Typography id="modal-modal-title" variant="h6" component="h3" sx={{ textAlign: 'center' }}>
-            New bank card
-          </Typography>
-          <NewBankCard onCloseModal={handleClose}/>
-        </Box>
-      </Modal>
-    </div>
+    <Modal
+      open={open}
+      onClose={handleClose}
+      aria-labelledby="modal-modal-title"
+      aria-describedby="modal-modal-description"
+    >
+      <Box sx={style}>
+        <Typography 
+          id="modal-modal-title" 
+          variant="h5" 
+          component="h2" 
+          sx={{ textAlign: 'center', mb: 3 }}
+        >
+          Add New Bank
+        </Typography>
+        <NewBankCard onCloseModal={handleClose} />
+      </Box>
+    </Modal>
   );
 }
 
-
-export default AddBankModal
+export default AddBankModal;

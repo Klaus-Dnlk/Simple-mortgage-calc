@@ -2,6 +2,7 @@ import axios from 'axios'
 import { createAsyncThunk } from '@reduxjs/toolkit'
 
 axios.defaults.baseURL = 'https://625314acc534af46cb93846b.mockapi.io/api/'
+
 export const fetchBanks = createAsyncThunk(
   'banks/fetchBanks',
   async (_, { rejectWithValue }) => {
@@ -9,7 +10,7 @@ export const fetchBanks = createAsyncThunk(
       const { data } = await axios.get('/banks')
       return data
     } catch (error) {
-      return rejectWithValue(error)
+      return rejectWithValue(error.message)
     }
   },
 )
@@ -30,7 +31,7 @@ export const addNewBank = createAsyncThunk(
       })
       return data
     } catch (error) {
-      rejectWithValue(error)
+      return rejectWithValue(error.message)
     }
   },
 )
@@ -39,15 +40,14 @@ export const deleteBank = createAsyncThunk(
   'banks/deleteBank',
   async (bankId, { rejectWithValue }) => {
     try {
-      const { data } = await axios.delete(`/banks/${bankId}`)
-      return data.id
+      await axios.delete(`/banks/${bankId}`)
+      return bankId
     } catch (error) {
-      rejectWithValue(error)
+      return rejectWithValue(error.message)
     }
   },
 )
 
-// eslint-disable-next-line import/no-anonymous-default-export
 export default {
   fetchBanks,
   addNewBank,

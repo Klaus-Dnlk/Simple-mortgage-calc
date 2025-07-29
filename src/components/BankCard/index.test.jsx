@@ -1,126 +1,196 @@
 import React from 'react';
-import { render, fireEvent, screen, waitFor  } from '@testing-library/react';
+import { render, fireEvent, screen, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { Provider } from 'react-redux';
-import axios from 'axios';
 import configureStore from 'redux-mock-store';
-import thunk from 'redux-thunk';
-import store from '../../redux/store';
 import NewBankCard from './index';
-import * as bankActions from '../../redux/banks/banks-operations';
 
+// Mock the Redux operations
+jest.mock('../../redux/banks/banks-operations', () => ({
+  addNewBank: jest.fn(() => ({ type: 'banks/addNewBank/pending' }))
+}));
 
-// const mockEmptyStore = configureStore([]);
+const mockStore = configureStore([]);
+
+const mockOnCloseModal = jest.fn();
+
+const initialState = {
+  banks: {
+    items: [
+      { id: '1', BankName: 'Test Bank', MaximumLoan: 500000, MinimumDownPayment: 50000, LoanTerm: 20, InterestRate: 5 }
+    ],
+    loading: false,
+    error: null
+  }
+};
+
+const renderWithProviders = (ui, { reduxState } = {}) => {
+  const store = mockStore(reduxState || initialState);
+  return render(
+    <Provider store={store}>
+      {ui}
+    </Provider>
+  );
+};
 
 describe('NewBankCard Component', () => {
-  const renderedComponent = () => {
-    render(
-    <Provider store={store}>
-        <NewBankCard />
-      </Provider>
-  )}
-  
-
-    it('some test', () => {
-        renderedComponent()
-    })
-//  
-
-  it('renders NewBankCard component with name', () => {
-    renderedComponent()
-  
-    const buttonElement = screen.getByText(/Add Bank/i);
+  beforeEach(() => {
+    jest.clearAllMocks();
   });
 
-  it('renders NewBankCard component with input and button', () => {
-    renderedComponent()
-    expect(screen.getByLabelText(/Bank Name/i)).toBeInTheDocument();
-    expect(screen.getByRole('button')).toBeInTheDocument();
+  it('renders all form fields', () => {
+    renderWithProviders(<NewBankCard onCloseModal={mockOnCloseModal} />);
+    
+    expect(screen.getByLabelText(/Bank name/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/Maximum loan/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/Minimum down payment/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/Loan term/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/Interest rate/i)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Add Bank/i })).toBeInTheDocument();
   });
 
-    it('validates input with initial capital letter', () => {
-    renderedComponent()
+  it('updates form fields when user types', () => {
+    renderWithProviders(<NewBankCard onCloseModal={mockOnCloseModal} />);
+    
+    const bankNameInput = screen.getByLabelText(/Bank name/i);
+    const maxLoanInput = screen.getByLabelText(/Maximum loan/i);
+    
+    fireEvent.change(bankNameInput, { target: { value: 'New Bank' } });
+    fireEvent.change(maxLoanInput, { target: { value: '1000000' } });
+    
+    expect(bankNameInput.value).toBe('New Bank');
+    expect(maxLoanInput.value).toBe('1000000');
+  });
 
-    const input = screen.getByRole('textbox');
-    fireEvent.change(input, { target: { value: 'test' } });
-
-    expect(screen.getByTestId('validation-error')).toHaveTextContent('must start with a capital letter');
+  it('shows validation error for bank name starting with lowercase', async () => {
+    renderWithProviders(<NewBankCard onCloseModal={mockOnCloseModal} />);
+    
+    const bankNameInput = screen.getByLabelText(/Bank name/i);
+    const addButton = screen.getByRole('button', { name: /Add Bank/i });
+    
+    fireEvent.change(bankNameInput, { target: { value: 'test bank' } });
+    fireEvent.click(addButton);
+    
+    await waitFor(() => {
+      expect(screen.getByText(/Bank name must start with a capital letter/i)).toBeInTheDocument();
     });
-
-        test('dispatches the correct action on form submission', () => {
-          renderedComponent()
-          fireEvent.click(screen.getByText(/Add Bank/i));
-
-          const actions = store.getActions();
-          const expectedPayload = { type: 'banks/filter' }; 
-          expect(actions).toEqual([expectedPayload]);
-        });
-
-        const middlewares = [thunk];
-        const mockStore = configureStore(middlewares);
-
-        jest.mock('../../redux/banks/banks-operations', () => ({
-        addBank: jest.fn(),
-        }));
-
-    describe('BankCard Component', () => {
-      let store;
-
-      beforeEach(() => {
-        store = mockStore({
-          banks: {
-            bankList: []
-          }
-        });
-
-        bankActions.addBank.mockClear();
-      });
-
-      test('calls addBank action with correct data on form submit', async () => {
-        const testData = { name: 'Test Bank', interestRate: 5, maxLoan: 100000, minDownPayment: 20, loanTerm: 10 };
-        bankActions.addBank.mockImplementation(() => Promise.resolve(testData));
-
-        render(
-          <Provider store={store}>
-            <NewBankCard />
-          </Provider>
-        );
-
-        fireEvent.change(screen.getByLabelText(/bank name/i), { target: { value: testData.name } });
-        fireEvent.change(screen.getByLabelText(/interest rate/i), { target: { value: testData.interestRate.toString() } });
-        fireEvent.change(screen.getByLabelText(/max loan/i), { target: { value: testData.maxLoan.toString() } });
-        fireEvent.change(screen.getByLabelText(/min down payment/i), { target: { value: testData.minDownPayment.toString() } });
-        fireEvent.change(screen.getByLabelText(/loan term/i), { target: { value: testData.loanTerm.toString() } });
-
-        fireEvent.click(screen.getByRole('button', { name: /submit/i }));
-
-        await waitFor(() => expect(bankActions.addBank).toHaveBeenCalledWith(testData));
-      });
-
-
-    });
-});
-
-jest.mock('axios');
-
-describe('BankCard Component with API call', () => {
-  test('fetches and displays data from an API', async () => {
-    const mockedResponse = { data: [{ id: '1', name: 'Mock Bank' }] };
-    axios.get.mockResolvedValueOnce(mockedResponse);
-
-    render(<NewBankCard />);
-
-    await screen.findByText('Mock Bank');
   });
-});
 
-describe('Async operations in BankCard Component', () => {
-  test('handles loading state correctly', async () => {
-    axios.get.mockResolvedValueOnce({ data: [{ id: '1', name: 'Async Bank' }] });
+  it('shows validation error for duplicate bank name', async () => {
+    renderWithProviders(<NewBankCard onCloseModal={mockOnCloseModal} />);
+    
+    const bankNameInput = screen.getByLabelText(/Bank name/i);
+    const maxLoanInput = screen.getByLabelText(/Maximum loan/i);
+    const minDownPaymentInput = screen.getByLabelText(/Minimum down payment/i);
+    const loanTermInput = screen.getByLabelText(/Loan term/i);
+    const interestRateInput = screen.getByLabelText(/Interest rate/i);
+    const addButton = screen.getByRole('button', { name: /Add Bank/i });
+    
+    // Fill form with existing bank name
+    fireEvent.change(bankNameInput, { target: { value: 'Test Bank' } });
+    fireEvent.change(maxLoanInput, { target: { value: '500000' } });
+    fireEvent.change(minDownPaymentInput, { target: { value: '50000' } });
+    fireEvent.change(loanTermInput, { target: { value: '20' } });
+    fireEvent.change(interestRateInput, { target: { value: '5' } });
+    
+    fireEvent.click(addButton);
+    
+    await waitFor(() => {
+      expect(screen.getByText(/Test Bank already exists/i)).toBeInTheDocument();
+    });
+  });
 
-    render(<NewBankCard />);
+  it('shows validation error for invalid interest rate', async () => {
+    renderWithProviders(<NewBankCard onCloseModal={mockOnCloseModal} />);
+    
+    const bankNameInput = screen.getByLabelText(/Bank name/i);
+    const maxLoanInput = screen.getByLabelText(/Maximum loan/i);
+    const minDownPaymentInput = screen.getByLabelText(/Minimum down payment/i);
+    const loanTermInput = screen.getByLabelText(/Loan term/i);
+    const interestRateInput = screen.getByLabelText(/Interest rate/i);
+    const addButton = screen.getByRole('button', { name: /Add Bank/i });
+    
+    // Fill form with invalid interest rate
+    fireEvent.change(bankNameInput, { target: { value: 'New Bank' } });
+    fireEvent.change(maxLoanInput, { target: { value: '500000' } });
+    fireEvent.change(minDownPaymentInput, { target: { value: '50000' } });
+    fireEvent.change(loanTermInput, { target: { value: '20' } });
+    fireEvent.change(interestRateInput, { target: { value: '150' } });
+    
+    fireEvent.click(addButton);
+    
+    await waitFor(() => {
+      expect(screen.getByText(/Interest rate cannot exceed 100%/i)).toBeInTheDocument();
+    });
+  });
 
-    expect(screen.getByTestId('loading')).toHaveTextContent('Loading...');
-    await waitFor(() => expect(screen.getByTestId('loading')).toBeEmptyDOMElement());
+  it('clears validation error when user starts typing', async () => {
+    renderWithProviders(<NewBankCard onCloseModal={mockOnCloseModal} />);
+    
+    const bankNameInput = screen.getByLabelText(/Bank name/i);
+    const addButton = screen.getByRole('button', { name: /Add Bank/i });
+    
+    // Trigger validation error
+    fireEvent.change(bankNameInput, { target: { value: 'test' } });
+    fireEvent.click(addButton);
+    
+    await waitFor(() => {
+      expect(screen.getByText(/Bank name must start with a capital letter/i)).toBeInTheDocument();
+    });
+    
+    // Clear error by typing valid input
+    fireEvent.change(bankNameInput, { target: { value: 'Valid Bank' } });
+    
+    await waitFor(() => {
+      expect(screen.queryByText(/Bank name must start with a capital letter/i)).not.toBeInTheDocument();
+    });
+  });
+
+  it('validates form data correctly', () => {
+    renderWithProviders(<NewBankCard onCloseModal={mockOnCloseModal} />);
+    
+    const bankNameInput = screen.getByLabelText(/Bank name/i);
+    const maxLoanInput = screen.getByLabelText(/Maximum loan/i);
+    const minDownPaymentInput = screen.getByLabelText(/Minimum down payment/i);
+    const loanTermInput = screen.getByLabelText(/Loan term/i);
+    const interestRateInput = screen.getByLabelText(/Interest rate/i);
+    
+    // Fill form with valid data
+    fireEvent.change(bankNameInput, { target: { value: 'New Bank' } });
+    fireEvent.change(maxLoanInput, { target: { value: '500000' } });
+    fireEvent.change(minDownPaymentInput, { target: { value: '50000' } });
+    fireEvent.change(loanTermInput, { target: { value: '20' } });
+    fireEvent.change(interestRateInput, { target: { value: '5' } });
+    
+    // Check that all fields have correct values
+    expect(bankNameInput.value).toBe('New Bank');
+    expect(maxLoanInput.value).toBe('500000');
+    expect(minDownPaymentInput.value).toBe('50000');
+    expect(loanTermInput.value).toBe('20');
+    expect(interestRateInput.value).toBe('5');
+  });
+
+  it('resets form after successful submission', async () => {
+    renderWithProviders(<NewBankCard onCloseModal={mockOnCloseModal} />);
+    
+    const bankNameInput = screen.getByLabelText(/Bank name/i);
+    const maxLoanInput = screen.getByLabelText(/Maximum loan/i);
+    
+    // Fill form
+    fireEvent.change(bankNameInput, { target: { value: 'New Bank' } });
+    fireEvent.change(maxLoanInput, { target: { value: '500000' } });
+    
+    // Submit form
+    const addButton = screen.getByRole('button', { name: /Add Bank/i });
+    fireEvent.click(addButton);
+    
+    // Check that form is reset
+    await waitFor(() => {
+      expect(bankNameInput.value).toBe('');
+    });
+    
+    await waitFor(() => {
+      expect(maxLoanInput.value).toBe('');
+    });
   });
 });

@@ -1,12 +1,242 @@
-This is a draft version of the Mortgage calculator (draft, because some functions are not finished)
+# Simple Mortgage Calculator
 
-You can visit BANKS page to see banks and their term and conditions on credit service.
+A React-based mortgage calculator application that allows users to manage banks and calculate mortgage payments.
 
-Bank page:
--- You can create a new Bank Card with mortgage credentials.
--- You can delete bank item from the list of you banks.
+## Features
 
-Calculator: You can use mortgage calculator by entering credentials by yourselfe of to choose the bank from select drop-down list.
+- **Bank Management**: Add, view, and delete banks with their loan terms
+- **Mortgage Calculator**: Calculate monthly mortgage payments based on loan parameters
+- **Real-time Validation**: Form validation with user-friendly error messages
+- **Responsive Design**: Modern UI built with Material-UI
+- **Error Handling**: Comprehensive error boundaries and error states
+- **Redux State Management**: Centralized state management with Redux Toolkit
 
-I used mockapi server service for the testing of the application.
-You can GET bank information, you can POST new items or DELETE them.
+## Tech Stack
+
+- **Frontend**: React 18, Material-UI (MUI)
+- **State Management**: Redux Toolkit, React Redux
+- **Form Validation**: Yup, React Hook Form
+- **HTTP Client**: Axios
+- **Testing**: Jest, React Testing Library
+- **Build Tool**: Create React App
+- **Deployment**: GitHub Pages
+
+## Project Structure
+
+```
+src/
+├── components/
+│   ├── BankCard/          # Bank form component
+│   └── ErrorBoundary/     # Error boundary component
+├── hooks/
+│   └── useAuth/           # Authentication hooks
+├── pages/
+│   ├── Banks/             # Banks management page
+│   ├── Calc/              # Mortgage calculator page
+│   ├── Home/              # Home page
+│   └── Modal/             # Modal component
+├── redux/
+│   └── banks/             # Banks state management
+├── routes/                # Application routing
+├── service/               # API services
+└── utils/                 # Utility functions
+```
+
+## Getting Started
+
+### Prerequisites
+
+- Node.js (version 14 or higher)
+- npm or yarn
+
+### Installation
+
+1. Clone the repository:
+
+```bash
+git clone https://github.com/your-username/Simple-mortgage-calc.git
+cd Simple-mortgage-calc
+```
+
+2. Install dependencies:
+
+```bash
+npm install
+```
+
+3. Start the development server:
+
+```bash
+npm start
+```
+
+The application will be available at `http://localhost:3000`.
+
+### Available Scripts
+
+- `npm start` - Start development server
+- `npm test` - Run tests
+- `npm run build` - Build for production
+- `npm run deploy` - Deploy to GitHub Pages
+- `npm run lint` - Run ESLint
+
+## API Integration
+
+The application uses a mock API endpoint for demonstration purposes:
+
+- Base URL: `https://625314acc534af46cb93846b.mockapi.io/api/`
+- Endpoints:
+  - `GET /banks` - Fetch all banks
+  - `POST /banks` - Add new bank
+  - `DELETE /banks/:id` - Delete bank
+
+## State Management
+
+The application uses Redux Toolkit for state management with the following structure:
+
+```javascript
+{
+  banks: {
+    items: [],        // Array of bank objects
+    loading: false,   // Loading state
+    error: null,      // Error state
+    filter: ''        // Search filter
+  }
+}
+```
+
+### Redux Actions
+
+- `fetchBanks` - Fetch banks from API
+- `addNewBank` - Add new bank
+- `deleteBank` - Delete bank
+- `changeFilter` - Update search filter
+
+## Components
+
+### BankCard Component
+
+Form component for adding new banks with validation:
+
+- Bank name validation (must start with capital letter)
+- Numeric field validation
+- Duplicate bank name checking
+- Real-time error display
+
+### Calc Component
+
+Mortgage calculator with the following features:
+
+- Bank selection dropdown
+- Loan parameter inputs
+- Real-time calculation
+- Validation and warnings
+- Form reset functionality
+
+### Banks Component
+
+Bank management interface:
+
+- Table display of banks
+- Add new bank functionality
+- Delete bank with confirmation
+- Loading and error states
+
+### ErrorBoundary Component
+
+Global error handling:
+
+- Catches JavaScript errors
+- Displays user-friendly error messages
+- Provides recovery options
+- Development mode error details
+
+## Testing
+
+The application includes comprehensive tests for all components:
+
+### Running Tests
+
+```bash
+npm test
+```
+
+### Test Coverage
+
+- Component rendering
+- User interactions
+- Form validation
+- Redux state management
+- Error handling
+- API integration
+
+### Test Structure
+
+- Unit tests for individual components
+- Integration tests for Redux actions
+- User interaction tests
+- Error boundary tests
+
+## Validation Rules
+
+### Bank Form Validation
+
+- **Bank Name**: Required, must start with capital letter
+- **Maximum Loan**: Required, positive number
+- **Minimum Down Payment**: Required, positive number
+- **Loan Term**: Required, positive number
+- **Interest Rate**: Required, positive number, max 100%
+
+### Calculator Validation
+
+- **All Fields**: Required
+- **Interest Rate**: Between 0-100%
+- **Loan Amount**: Greater than 0
+- **Down Payment**: Non-negative
+- **Loan Term**: Greater than 0
+
+## Error Handling
+
+The application implements comprehensive error handling:
+
+1. **Form Validation Errors**: Real-time validation with user-friendly messages
+2. **API Errors**: Network and server error handling
+3. **JavaScript Errors**: Error boundaries for unexpected errors
+4. **Loading States**: User feedback during async operations
+
+## Deployment
+
+The application is configured for deployment on GitHub Pages:
+
+1. Build the application:
+
+```bash
+npm run build
+```
+
+2. Deploy to GitHub Pages:
+
+```bash
+npm run deploy
+```
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Add tests for new functionality
+5. Submit a pull request
+
+## License
+
+This project is licensed under the MIT License.
+
+## Future Enhancements
+
+- [ ] User authentication
+- [ ] Save calculation history
+- [ ] Export calculations to PDF
+- [ ] Advanced loan comparison features
+- [ ] Mobile app version
+- [ ] Real-time interest rate updates

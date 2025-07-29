@@ -28,7 +28,14 @@ const filter = createReducer('', {
   [changeFilter]: (_, { payload }) => payload,
 })
 
-const error = createReducer(null, {})
+const error = createReducer(null, {
+  [operations.fetchBanks.rejected]: (_, { payload }) => payload,
+  [operations.addNewBank.rejected]: (_, { payload }) => payload,
+  [operations.deleteBank.rejected]: (_, { payload }) => payload,
+  [operations.fetchBanks.fulfilled]: () => null,
+  [operations.addNewBank.fulfilled]: () => null,
+  [operations.deleteBank.fulfilled]: () => null,
+})
 
 export default combineReducers({
   items,
