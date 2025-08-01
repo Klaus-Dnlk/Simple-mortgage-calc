@@ -3,6 +3,7 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import NewBankCard from '../../components/BankCard/index';
+import Portal from '../../components/Portal';
 
 const style = {
   position: 'absolute',
@@ -28,24 +29,26 @@ function AddBankModal({ onCloseModal }) {
   };
 
   return (
-    <Modal
-      open={open}
-      onClose={handleClose}
-      aria-labelledby="modal-modal-title"
-      aria-describedby="modal-modal-description"
-    >
-      <Box sx={style}>
-        <Typography 
-          id="modal-modal-title" 
-          variant="h5" 
-          component="h2" 
-          sx={{ textAlign: 'center', mb: 3 }}
-        >
-          Add New Bank
-        </Typography>
-        <NewBankCard onCloseModal={handleClose} />
-      </Box>
-    </Modal>
+    <Portal>
+      <Modal
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={style}>
+          <Typography 
+            id="modal-modal-title" 
+            variant="h5" 
+            component="h2" 
+            sx={{ textAlign: 'center', mb: 3 }}
+          >
+            Add New Bank
+          </Typography>
+          <NewBankCard onCloseModal={handleClose} />
+        </Box>
+      </Modal>
+    </Portal>
   );
 }
 

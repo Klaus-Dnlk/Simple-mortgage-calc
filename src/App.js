@@ -19,6 +19,9 @@ function App() {
             <Button color='inherit' component={NavLink} to='/calc'>
               Calculator
             </Button>
+            <Button color='inherit' component={NavLink} to='/patterns'>
+              Patterns Demo
+            </Button>
           </Toolbar>
         </AppBar>
 

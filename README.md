@@ -5,6 +5,7 @@ A React-based mortgage calculator application that allows users to manage banks 
 ## Features
 
 - **Bank Management**: Add, view, and delete banks with their loan terms
+- **Bank Details Modal**: Detailed view of bank information using React Portal
 - **Mortgage Calculator**: Calculate monthly mortgage payments based on loan parameters
 - **Real-time Validation**: Form validation with user-friendly error messages
 - **Responsive Design**: Modern UI built with Material-UI
@@ -22,25 +23,6 @@ A React-based mortgage calculator application that allows users to manage banks 
 - **Deployment**: GitHub Pages
 
 ## Project Structure
-
-```
-src/
-├── components/
-│   ├── BankCard/          # Bank form component
-│   └── ErrorBoundary/     # Error boundary component
-├── hooks/
-│   └── useAuth/           # Authentication hooks
-├── pages/
-│   ├── Banks/             # Banks management page
-│   ├── Calc/              # Mortgage calculator page
-│   ├── Home/              # Home page
-│   └── Modal/             # Modal component
-├── redux/
-│   └── banks/             # Banks state management
-├── routes/                # Application routing
-├── service/               # API services
-└── utils/                 # Utility functions
-```
 
 ## Getting Started
 
@@ -231,6 +213,29 @@ npm run deploy
 ## License
 
 This project is licensed under the MIT License.
+
+## React Patterns Used
+
+### Portal Pattern
+
+The application demonstrates the use of React Portal for modal rendering:
+
+- **BankDetailsModal**: Renders outside the normal DOM hierarchy
+- **Benefits**:
+  - Avoids CSS z-index issues
+  - Better accessibility
+  - Cleaner component structure
+  - Proper event bubbling
+
+### Custom Hooks
+
+- **useFormValidation**: Reusable form validation logic
+- **useAuth**: Authentication state management
+
+### Error Boundaries
+
+- Global error handling for unexpected JavaScript errors
+- Graceful degradation with user-friendly error messages
 
 ## Future Enhancements
 

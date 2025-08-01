@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { banksOperations, banksSelectors } from '../../redux/banks';
 import AddBankModal from '../Modal';
+import BankDetailsModal from '../../components/BankDetailsModal';
 
 import {
   Box,
@@ -30,6 +31,8 @@ function Banks() {
   const dispatch = useDispatch();
 
   const [showModal, setShowModal] = React.useState(false);
+  const [selectedBank, setSelectedBank] = React.useState(null);
+  const [showDetailsModal, setShowDetailsModal] = React.useState(false);
 
   useEffect(() => {
     dispatch(banksOperations.fetchBanks());
@@ -41,6 +44,16 @@ function Banks() {
 
   const handleCloseModal = () => {
     setShowModal(false);
+  };
+
+  const handleOpenDetailsModal = (bank) => {
+    setSelectedBank(bank);
+    setShowDetailsModal(true);
+  };
+
+  const handleCloseDetailsModal = () => {
+    setShowDetailsModal(false);
+    setSelectedBank(null);
   };
 
   const handleDeleteBank = (bankId) => {
@@ -83,6 +96,14 @@ function Banks() {
         <AddBankModal onCloseModal={handleCloseModal} />
       )}
 
+      {showDetailsModal && selectedBank && (
+        <BankDetailsModal
+          bank={selectedBank}
+          isOpen={showDetailsModal}
+          onClose={handleCloseDetailsModal}
+        />
+      )}
+
       {banks.length === 0 && !isLoading ? (
         <Paper sx={{ p: 4, textAlign: 'center' }}>
           <Typography variant="h6" color="text.secondary">
@@ -91,6 +112,11 @@ function Banks() {
         </Paper>
       ) : (
         <TableContainer component={Paper} elevation={2}>
+          <Box sx={{ p: 2, bgcolor: 'info.light', borderRadius: 1, mb: 2 }}>
+            <Typography variant="body2" color="info.contrastText">
+              💡 Click on any bank row to view detailed information
+            </Typography>
+          </Box>
           <Table sx={{ minWidth: 650 }} aria-label="banks table">
             <TableHead>
               <TableRow sx={{ backgroundColor: 'primary.main' }}>
@@ -121,8 +147,10 @@ function Banks() {
                   key={id}
                   sx={{ 
                     '&:last-child td, &:last-child th': { border: 0 },
-                    '&:hover': { backgroundColor: 'action.hover' }
+                    '&:hover': { backgroundColor: 'action.hover' },
+                    cursor: 'pointer'
                   }}
+                  onClick={() => handleOpenDetailsModal({ id, BankName, InterestRate, MaximumLoan, MinimumDownPayment, LoanTerm })}
                 >
                   <TableCell component="th" scope="row" sx={{ fontWeight: 'medium' }}>
                     {BankName}
@@ -134,7 +162,10 @@ function Banks() {
                   <TableCell align="center">
                     <Tooltip title="Delete bank">
                       <IconButton 
-                        onClick={() => handleDeleteBank(id)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDeleteBank(id);
+                        }}
                         color="error"
                         size="small"
                       >

@@ -2,6 +2,7 @@ import { Routes, Route } from 'react-router-dom'
 import Home from '../pages/Home'
 import Banks from '../pages/Banks'
 import Calc from '../pages/Calc'
+import PatternsDemo from '../pages/PatternsDemo'
 
 function AppRoutes() {
 
@@ -17,6 +18,10 @@ function AppRoutes() {
                 element={
                     <Banks />
                 }
+            />
+            <Route 
+                path='/patterns'
+                element={<PatternsDemo />}
             />
         </Routes>
     )
