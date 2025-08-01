@@ -1,17 +1,16 @@
 import React, { useMemo, useCallback } from 'react';
 import { Card, CardContent, Typography, Box, Chip } from '@mui/material';
 
-/**
- * MemoizedBankCard Component - Demonstrates Memoization Techniques
- * 
- * This component shows how to use React.memo, useMemo, and useCallback to optimize performance
- * by preventing unnecessary re-renders and recalculations
- * 
- * Memoization Benefits:
- * - Prevents unnecessary re-renders when props haven't changed
- * - Optimizes expensive calculations
- * - Improves overall application performance
- */
+// MemoizedBankCard Component - Demonstrates Memoization Techniques
+// This component shows how to use React.memo, useMemo, and useCallback to optimize performance
+// by preventing unnecessary re-renders and recalculations
+// 
+// Benefirs:
+// - Prevents unnecessary re-renders when props haven't changed
+// - Optimizes expensive calculations
+// - Improves overall application performance
+// 
+
 const MemoizedBankCard = React.memo(({ bank, onSelect, isSelected }) => {
   // useMemo for expensive calculations that depend on bank data
   const calculatedValues = useMemo(() => {

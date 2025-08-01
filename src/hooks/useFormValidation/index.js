@@ -1,22 +1,19 @@
 import { useState, useEffect, useCallback } from 'react';
 
-/**
- * useFormValidation - custom hook for form validation
- * 
- * Custom hooks allow you to extract component logic into reusable functions
- * This hook demonstrates useEffect for form validation with real-time feedback
- * 
- * Usage:
- * const { values, errors, isValid, handleChange, handleSubmit } = useFormValidation(initialValues, validationRules);
- * 
- * Pros
- * - Reusable validation logic
- * - Separation of concerns
- * - Easier testing
- * - Consistent validation across components
- 
- * 
- */
+// useFormValidation - custom hook for form validation
+// Custom hooks allow you to extract component logic into reusable functions
+// This hook demonstrates useEffect for form validation with real-time feedback
+// 
+// Usage:
+// const { values, errors, isValid, handleChange, handleSubmit } = useFormValidation(initialValues, validationRules);
+// 
+// Pros
+// - Reusable validation logic
+// - Separation of concerns
+// - Easier testing
+// - Consistent validation across components
+
+
 const useFormValidation = (initialValues = {}, validationRules = {}) => {
   const [values, setValues] = useState(initialValues);
   const [errors, setErrors] = useState({});

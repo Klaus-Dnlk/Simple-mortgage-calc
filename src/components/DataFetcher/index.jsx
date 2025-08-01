@@ -1,19 +1,18 @@
 import React from 'react';
 import { CircularProgress, Alert, Box } from '@mui/material';
 
-/**
- * DataFetcher Component - Demonstrates Render Props Pattern
- * 
- * Render Props Pattern allows components to share behavior through a prop that receives a function
- * This component handles data fetching states (loading, error, success) and passes them to children
- * 
- * Usage:
- * <DataFetcher fetchFunction={someAsyncFunction}>
- *   {({ data, loading, error, refetch }) => (
- *     loading ? <Spinner /> : <DataDisplay data={data} />
- *   )}
- * </DataFetcher>
- */
+// DataFetcher Component - Demonstrates Render Props Pattern
+// Render Props Pattern allows components to share behavior through a prop that receives a function
+// This component handles data fetching states (loading, error, success) and passes them to children
+// 
+// Usage:
+// <DataFetcher fetchFunction={someAsyncFunction}>
+//   {({ data, loading, error, refetch }) => (
+//     loading ? <Spinner /> : <DataDisplay data={data} />
+//   )}
+// </DataFetcher>
+
+
 class DataFetcher extends React.Component {
   constructor(props) {
     super(props);
