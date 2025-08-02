@@ -237,6 +237,49 @@ The application demonstrates the use of React Portal for modal rendering:
 - Global error handling for unexpected JavaScript errors
 - Graceful degradation with user-friendly error messages
 
+## Security Features
+
+### XSS Protection
+
+- **Input Sanitization**: All user inputs are sanitized before processing
+- **HTML Sanitization**: DOMPurify integration for safe HTML rendering
+- **SafeHTML Component**: Secure component for rendering HTML content
+
+### CSRF Protection
+
+- **CSRF Token Generation**: Cryptographically secure token generation
+- **Token Validation**: Server-side token validation for sensitive operations
+
+### Input Validation
+
+- **Type-specific Validation**: Different validation rules for different input types
+- **Range Validation**: Numeric inputs are validated within safe ranges
+- **Format Validation**: Email, URL, and other formats are validated
+
+### API Security
+
+- **Security Headers**: Automatic addition of security headers to requests
+- **Response Validation**: API responses are validated and sanitized
+- **Rate Limiting**: Client-side rate limiting to prevent abuse
+
+### Secure Storage
+
+- **Encrypted Storage**: Sensitive data is encrypted before storage
+- **Session Storage**: Sensitive data stored in session storage (cleared on tab close)
+- **Secure Retrieval**: Safe data retrieval with error handling
+
+### Content Security Policy
+
+- **CSP Headers**: Configurable Content Security Policy
+- **Resource Restrictions**: Limits external resource loading
+- **Frame Protection**: Prevents clickjacking attacks
+
+### Environment Variables
+
+- **Secure Configuration**: API keys and secrets stored in environment variables
+- **Example Configuration**: `env.example` file shows required configuration
+- **No Hardcoded Secrets**: No sensitive data in source code
+
 ## Future Enhancements
 
 - [ ] User authentication

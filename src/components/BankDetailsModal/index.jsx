@@ -11,23 +11,14 @@ import {
   IconButton
 } from '@mui/material';
 import { Close as CloseIcon } from '@mui/icons-material';
+import { useIntl } from 'react-intl';
+import { formatCurrency, formatPercent } from '../../locales';
 import Portal from '../Portal';
 
 const BankDetailsModal = ({ bank, isOpen, onClose }) => {
+  const intl = useIntl();
+  
   if (!isOpen || !bank) return null;
-
-  const formatCurrency = (amount) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(amount);
-  };
-
-  const formatPercentage = (rate) => {
-    return `${rate}%`;
-  };
 
   return (
     <Portal>
@@ -90,7 +81,10 @@ const BankDetailsModal = ({ bank, isOpen, onClose }) => {
             {/* Interest Rate Highlight */}
             <Box sx={{ mb: 3, textAlign: 'center' }}>
               <Chip
-                label={`Interest Rate: ${formatPercentage(bank.InterestRate)}`}
+                label={intl.formatMessage(
+                  { id: 'bankDetails.interestRate' },
+                  { rate: bank.InterestRate }
+                )}
                 color="primary"
                 size="large"
                 sx={{
@@ -109,7 +103,7 @@ const BankDetailsModal = ({ bank, isOpen, onClose }) => {
               <Grid item xs={12} sm={6}>
                 <Box sx={{ textAlign: 'center', p: 2, bgcolor: 'success.light', borderRadius: 2 }}>
                   <Typography variant="h6" color="white" gutterBottom>
-                    Maximum Loan
+                    {intl.formatMessage({ id: 'bankDetails.maxLoan' })}
                   </Typography>
                   <Typography variant="h4" color="white" fontWeight="bold">
                     {formatCurrency(bank.MaximumLoan)}
@@ -120,7 +114,7 @@ const BankDetailsModal = ({ bank, isOpen, onClose }) => {
               <Grid item xs={12} sm={6}>
                 <Box sx={{ textAlign: 'center', p: 2, bgcolor: 'warning.light', borderRadius: 2 }}>
                   <Typography variant="h6" color="white" gutterBottom>
-                    Minimum Down Payment
+                    {intl.formatMessage({ id: 'bankDetails.minDownPayment' })}
                   </Typography>
                   <Typography variant="h4" color="white" fontWeight="bold">
                     {formatCurrency(bank.MinimumDownPayment)}
@@ -131,10 +125,13 @@ const BankDetailsModal = ({ bank, isOpen, onClose }) => {
               <Grid item xs={12}>
                 <Box sx={{ textAlign: 'center', p: 2, bgcolor: 'info.light', borderRadius: 2 }}>
                   <Typography variant="h6" color="white" gutterBottom>
-                    Loan Term
+                    {intl.formatMessage({ id: 'bankDetails.loanTerm' })}
                   </Typography>
                   <Typography variant="h4" color="white" fontWeight="bold">
-                    {bank.LoanTerm} Years
+                    {intl.formatMessage(
+                      { id: 'bankDetails.years' },
+                      { count: bank.LoanTerm }
+                    )}
                   </Typography>
                 </Box>
               </Grid>
@@ -145,28 +142,28 @@ const BankDetailsModal = ({ bank, isOpen, onClose }) => {
             {/* Additional Information */}
             <Box sx={{ mt: 3 }}>
               <Typography variant="h6" gutterBottom color="primary">
-                📊 Loan Analysis
+                {intl.formatMessage({ id: 'bankDetails.loanAnalysis' })}
               </Typography>
               <Grid container spacing={2}>
-                <Grid item xs={12} sm={6}>
-                  <Typography variant="body2" color="text.secondary">
-                    Down Payment Percentage:
-                  </Typography>
-                  <Typography variant="body1" fontWeight="bold">
-                    {((bank.MinimumDownPayment / bank.MaximumLoan) * 100).toFixed(1)}%
-                  </Typography>
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <Typography variant="body2" color="text.secondary">
-                    Monthly Payment (Est.):
-                  </Typography>
-                  <Typography variant="body1" fontWeight="bold">
-                    {formatCurrency(
-                      (bank.MaximumLoan * (bank.InterestRate / 100 / 12) * Math.pow(1 + bank.InterestRate / 100 / 12, bank.LoanTerm * 12)) /
-                      (Math.pow(1 + bank.InterestRate / 100 / 12, bank.LoanTerm * 12) - 1)
-                    )}
-                  </Typography>
-                </Grid>
+                                  <Grid item xs={12} sm={6}>
+                    <Typography variant="body2" color="text.secondary">
+                      {intl.formatMessage({ id: 'bankDetails.downPaymentPercentage' })}
+                    </Typography>
+                    <Typography variant="body1" fontWeight="bold">
+                      {formatPercent((bank.MinimumDownPayment / bank.MaximumLoan) * 100)}
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <Typography variant="body2" color="text.secondary">
+                      {intl.formatMessage({ id: 'bankDetails.monthlyPayment' })}
+                    </Typography>
+                    <Typography variant="body1" fontWeight="bold">
+                      {formatCurrency(
+                        (bank.MaximumLoan * (bank.InterestRate / 100 / 12) * Math.pow(1 + bank.InterestRate / 100 / 12, bank.LoanTerm * 12)) /
+                        (Math.pow(1 + bank.InterestRate / 100 / 12, bank.LoanTerm * 12) - 1)
+                      )}
+                    </Typography>
+                  </Grid>
               </Grid>
             </Box>
 
@@ -177,18 +174,21 @@ const BankDetailsModal = ({ bank, isOpen, onClose }) => {
                 onClick={onClose}
                 sx={{ minWidth: 120 }}
               >
-                Close
+                {intl.formatMessage({ id: 'bankDetails.close' })}
               </Button>
               <Button
                 variant="contained"
                 onClick={() => {
                   // Here you could add logic to select this bank
-                  alert(`Selected ${bank.BankName} for mortgage calculation`);
+                  alert(intl.formatMessage(
+                    { id: 'bankDetails.selectBankMessage' },
+                    { bankName: bank.BankName }
+                  ));
                   onClose();
                 }}
                 sx={{ minWidth: 120 }}
               >
-                Select Bank
+                {intl.formatMessage({ id: 'bankDetails.selectBank' })}
               </Button>
             </Box>
           </CardContent>

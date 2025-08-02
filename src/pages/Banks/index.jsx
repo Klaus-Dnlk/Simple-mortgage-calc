@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { useIntl } from 'react-intl';
 import { banksOperations, banksSelectors } from '../../redux/banks';
 import AddBankModal from '../Modal';
 import BankDetailsModal from '../../components/BankDetailsModal';
@@ -25,6 +26,7 @@ import {
 } from '@mui/material';
 
 function Banks() {
+  const intl = useIntl();
   const banks = useSelector(banksSelectors.getAllBanks);
   const isLoading = useSelector(banksSelectors.getLoading);
   const error = useSelector(banksSelectors.getError);
@@ -57,7 +59,7 @@ function Banks() {
   };
 
   const handleDeleteBank = (bankId) => {
-    if (window.confirm('Are you sure you want to delete this bank?')) {
+    if (window.confirm(intl.formatMessage({ id: 'banks.deleteConfirm' }))) {
       dispatch(banksOperations.deleteBank(bankId));
     }
   };
@@ -74,7 +76,7 @@ function Banks() {
     <Box sx={{ p: 3 }}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
         <Typography variant="h4">
-          Banks Management
+          {intl.formatMessage({ id: 'banks.title' })}
         </Typography>
         <Button
           variant="contained"
@@ -82,7 +84,7 @@ function Banks() {
           onClick={handleOpenModal}
           size="large"
         >
-          Add New Bank
+          {intl.formatMessage({ id: 'banks.addBank' })}
         </Button>
       </Box>
 
@@ -107,36 +109,36 @@ function Banks() {
       {banks.length === 0 && !isLoading ? (
         <Paper sx={{ p: 4, textAlign: 'center' }}>
           <Typography variant="h6" color="text.secondary">
-            No banks found. Add your first bank to get started.
+            {intl.formatMessage({ id: 'banks.noBanks' })}
           </Typography>
         </Paper>
       ) : (
         <TableContainer component={Paper} elevation={2}>
           <Box sx={{ p: 2, bgcolor: 'info.light', borderRadius: 1, mb: 2 }}>
             <Typography variant="body2" color="info.contrastText">
-              💡 Click on any bank row to view detailed information
+              {intl.formatMessage({ id: 'banks.clickHint' })}
             </Typography>
           </Box>
           <Table sx={{ minWidth: 650 }} aria-label="banks table">
             <TableHead>
               <TableRow sx={{ backgroundColor: 'primary.main' }}>
                 <TableCell sx={{ fontWeight: 'bold', color: 'white' }}>
-                  Bank Name
+                  {intl.formatMessage({ id: 'banks.tableHeaders.bankName' })}
                 </TableCell>
                 <TableCell sx={{ fontWeight: 'bold', color: 'white' }} align="right">
-                  Interest Rate (%)
+                  {intl.formatMessage({ id: 'banks.tableHeaders.interestRate' })}
                 </TableCell>
                 <TableCell sx={{ fontWeight: 'bold', color: 'white' }} align="right">
-                  Maximum Loan ($)
+                  {intl.formatMessage({ id: 'banks.tableHeaders.maxLoan' })}
                 </TableCell>
                 <TableCell sx={{ fontWeight: 'bold', color: 'white' }} align="right">
-                  Minimum Down Payment ($)
+                  {intl.formatMessage({ id: 'banks.tableHeaders.minDownPayment' })}
                 </TableCell>
                 <TableCell sx={{ fontWeight: 'bold', color: 'white' }} align="right">
-                  Loan Term (years)
+                  {intl.formatMessage({ id: 'banks.tableHeaders.loanTerm' })}
                 </TableCell>
                 <TableCell sx={{ fontWeight: 'bold', color: 'white' }} align="center">
-                  Actions
+                  {intl.formatMessage({ id: 'banks.tableHeaders.actions' })}
                 </TableCell>
               </TableRow>
             </TableHead>
@@ -160,7 +162,7 @@ function Banks() {
                   <TableCell align="right">${MinimumDownPayment.toLocaleString()}</TableCell>
                   <TableCell align="right">{LoanTerm} years</TableCell>
                   <TableCell align="center">
-                    <Tooltip title="Delete bank">
+                    <Tooltip title={intl.formatMessage({ id: 'banks.deleteTooltip' })}>
                       <IconButton 
                         onClick={(e) => {
                           e.stopPropagation();

@@ -6,6 +6,7 @@ import * as yup from "yup";
 import { v4 as uuidv4 } from 'uuid';
 import { getAllBanks } from '../../redux/banks/banks-selectors'
 import banksOperations from '../../redux/banks/banks-operations';
+import { inputValidation, sanitizeInput } from '../../utils/security';
 
 const validationSchema = yup.object({
     BankName: yup.string()
@@ -42,9 +43,19 @@ function NewBankCard({ onCloseModal }) {
 
     const handleChange = e => {
         const { name, value } = e.target
+        
+        // Sanitize input based on field type
+        let sanitizedValue = value;
+        if (name === 'BankName') {
+            sanitizedValue = sanitizeInput(value);
+        } else if (['MaximumLoan', 'MinimumDownPayment', 'LoanTerm', 'InterestRate'].includes(name)) {
+            // For numeric fields, only allow digits and decimal point
+            sanitizedValue = value.replace(/[^0-9.]/g, '');
+        }
+        
         setFormData(prev => ({
           ...prev,
-          [name]: value
+          [name]: sanitizedValue
         }))
         setValidationError('') // Clear error when user starts typing
     }    
@@ -57,6 +68,32 @@ function NewBankCard({ onCloseModal }) {
           banks.find(e => e.BankName.toLowerCase() === name.toLowerCase())
 
         try {
+            // Additional security validation
+            if (!inputValidation.validateBankName(formData.BankName)) {
+                setValidationError('Invalid bank name format')
+                return
+            }
+            
+            if (!inputValidation.validateCurrency(formData.MaximumLoan)) {
+                setValidationError('Invalid maximum loan amount')
+                return
+            }
+            
+            if (!inputValidation.validateCurrency(formData.MinimumDownPayment)) {
+                setValidationError('Invalid minimum down payment amount')
+                return
+            }
+            
+            if (!inputValidation.validateLoanTerm(formData.LoanTerm)) {
+                setValidationError('Invalid loan term')
+                return
+            }
+            
+            if (!inputValidation.validatePercentage(formData.InterestRate)) {
+                setValidationError('Invalid interest rate')
+                return
+            }
+            
             const validData = await validationSchema.validate(formData, { abortEarly: false })
             
             if(repeatName(formData.BankName)) {
