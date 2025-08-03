@@ -12,14 +12,17 @@ import {
   MenuItem, 
   Select,
   Alert,
-  Grid
+  Grid,
+  Stack
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
+import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import { isEmpty, isNumber, clamp, round } from 'lodash';
 
 import { banksOperations, banksSelectors } from '../../redux/banks';
 import { useSelector, useDispatch } from 'react-redux';
 import numeral from 'numeral';
+import { generateMortgageReport, savePDF } from '../../utils/pdf-utils';
 
 const calculateMonthlyPayment = (principal, annualRate, years) => {
   if (!isNumber(principal) || !isNumber(annualRate) || !isNumber(years)) return 0;
@@ -146,6 +149,40 @@ function Calc() {
     setBankValue('');
     setValidationError('');
     setWarning('');
+  };
+
+  // Export calculation to PDF
+  const handleExportPDF = () => {
+    if (monthPayment <= 0) {
+      setValidationError('Please calculate a payment first');
+      return;
+    }
+
+    const selectedBank = banks.find(bank => bank.BankName === bankValue);
+    if (!selectedBank) {
+      setValidationError('Please select a bank first');
+      return;
+    }
+
+    const calculationData = {
+      loanAmount: parseFloat(formData.initialLoan),
+      downPayment: parseFloat(formData.downPayment),
+      downPaymentPercentage: (parseFloat(formData.downPayment) / parseFloat(formData.initialLoan)) * 100,
+      monthlyPayment: monthPayment,
+      totalPayment: monthPayment * parseFloat(formData.loanTerm) * 12,
+      totalInterest: (monthPayment * parseFloat(formData.loanTerm) * 12) - parseFloat(formData.initialLoan)
+    };
+
+    const bankData = {
+      name: selectedBank.BankName,
+      interestRate: selectedBank.InterestRate,
+      maxLoan: selectedBank.MaximumLoan,
+      minDownPayment: selectedBank.MinimumDownPayment,
+      loanTerm: selectedBank.LoanTerm
+    };
+
+    const doc = generateMortgageReport(calculationData, bankData);
+    savePDF(doc, `mortgage-calculation-${new Date().toISOString().split('T')[0]}.pdf`);
   };  
 
   if (isLoading) {
@@ -244,7 +281,7 @@ function Calc() {
             </Grid>
           </Grid>
           
-          <Box sx={{ display: 'flex', gap: 2, mt: 3 }}>
+          <Stack direction="row" spacing={2} sx={{ mt: 3 }}>
             <Button 
               variant='contained' 
               onClick={handleCalculate}
@@ -257,7 +294,18 @@ function Calc() {
                 <DeleteIcon />
               </IconButton>
             </Tooltip>
-          </Box>
+            {monthPayment > 0 && (
+              <Tooltip title="Export to PDF">
+                <IconButton 
+                  onClick={handleExportPDF}
+                  color="primary"
+                  data-testid="export-pdf"
+                >
+                  <PictureAsPdfIcon />
+                </IconButton>
+              </Tooltip>
+            )}
+          </Stack>
         </Grid>
         
         <Grid item xs={12} md={6}>

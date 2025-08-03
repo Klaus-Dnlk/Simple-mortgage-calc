@@ -23,8 +23,11 @@ import {
   Tooltip,
   Typography,
   Alert,
-  Button
+  Button,
+  Stack
 } from '@mui/material';
+import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
+import { generateBanksComparison, savePDF } from '../../utils/pdf-utils';
 
 function Banks() {
   const intl = useIntl();
@@ -65,6 +68,17 @@ function Banks() {
     }
   };
 
+  // Export banks comparison to PDF
+  const handleExportBanksPDF = () => {
+    if (banks.length === 0) {
+      alert('No banks to export');
+      return;
+    }
+
+    const doc = generateBanksComparison(banks);
+    savePDF(doc, `banks-comparison-${new Date().toISOString().split('T')[0]}.pdf`);
+  };
+
   if (isLoading) {
     return (
       <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
@@ -79,14 +93,27 @@ function Banks() {
         <Typography variant="h4">
           {intl.formatMessage({ id: 'banks.title' })}
         </Typography>
-        <Button
-          variant="contained"
-          startIcon={<AddCircleOutlineIcon />}
-          onClick={handleOpenModal}
-          size="large"
-        >
-          {intl.formatMessage({ id: 'banks.addBank' })}
-        </Button>
+        <Stack direction="row" spacing={2}>
+          {banks.length > 0 && (
+            <Tooltip title="Export banks comparison to PDF">
+              <IconButton 
+                onClick={handleExportBanksPDF}
+                color="primary"
+                data-testid="export-banks-pdf"
+              >
+                <PictureAsPdfIcon />
+              </IconButton>
+            </Tooltip>
+          )}
+          <Button
+            variant="contained"
+            startIcon={<AddCircleOutlineIcon />}
+            onClick={handleOpenModal}
+            size="large"
+          >
+            {intl.formatMessage({ id: 'banks.addBank' })}
+          </Button>
+        </Stack>
       </Box>
 
       {error && (
