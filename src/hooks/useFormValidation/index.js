@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { isEmpty, isString, isFunction, debounce } from 'lodash';
 
 // useFormValidation - custom hook for form validation
 // Custom hooks allow you to extract component logic into reusable functions
@@ -20,45 +21,43 @@ const useFormValidation = (initialValues = {}, validationRules = {}) => {
   const [isValid, setIsValid] = useState(false);
   const [touched, setTouched] = useState({});
 
-  // Validation function using useEffect
-  useEffect(() => {
-    const validateForm = () => {
+  // Debounced validation function
+  const debouncedValidate = useCallback(
+    debounce((values, validationRules, touched) => {
       const newErrors = {};
       let formIsValid = true;
 
-      // Validate each field based on validation rules
       Object.keys(validationRules).forEach(fieldName => {
         const value = values[fieldName];
         const rules = validationRules[fieldName];
         
-        // Only validate if field has been touched or has a value
-        if (touched[fieldName] || value) {
+        if (touched[fieldName] || !isEmpty(value)) {
           // Required validation
-          if (rules.required && (!value || value.trim() === '')) {
+          if (rules.required && (isEmpty(value) || (isString(value) && value.trim() === ''))) {
             newErrors[fieldName] = rules.required === true ? 'This field is required' : rules.required;
             formIsValid = false;
           }
           
           // Min length validation
-          else if (rules.minLength && value && value.length < rules.minLength) {
+          else if (rules.minLength && isString(value) && value.length < rules.minLength) {
             newErrors[fieldName] = rules.minLengthMessage || `Minimum ${rules.minLength} characters required`;
             formIsValid = false;
           }
           
           // Max length validation
-          else if (rules.maxLength && value && value.length > rules.maxLength) {
+          else if (rules.maxLength && isString(value) && value.length > rules.maxLength) {
             newErrors[fieldName] = rules.maxLengthMessage || `Maximum ${rules.maxLength} characters allowed`;
             formIsValid = false;
           }
           
           // Pattern validation (regex)
-          else if (rules.pattern && value && !rules.pattern.test(value)) {
+          else if (rules.pattern && isString(value) && !rules.pattern.test(value)) {
             newErrors[fieldName] = rules.patternMessage || 'Invalid format';
             formIsValid = false;
           }
           
           // Custom validation function
-          else if (rules.custom && typeof rules.custom === 'function') {
+          else if (rules.custom && isFunction(rules.custom)) {
             const customError = rules.custom(value, values);
             if (customError) {
               newErrors[fieldName] = customError;
@@ -70,10 +69,14 @@ const useFormValidation = (initialValues = {}, validationRules = {}) => {
 
       setErrors(newErrors);
       setIsValid(formIsValid);
-    };
+    }, 300),
+    []
+  );
 
-    validateForm();
-  }, [values, validationRules, touched]);
+  // Validation function using useEffect
+  useEffect(() => {
+    debouncedValidate(values, validationRules, touched);
+  }, [values, validationRules, touched, debouncedValidate]);
 
   // Handle input changes
   const handleChange = useCallback((fieldName, value) => {

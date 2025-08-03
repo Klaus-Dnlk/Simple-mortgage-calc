@@ -1,6 +1,7 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { banksSelectors } from '../../redux/banks';
+import { formatCurrency, formatPercentage, safeGet } from '../../utils/lodash-utils';
 import {
   Box,
   Card,
@@ -37,33 +38,38 @@ const BanksStatistics = () => {
   const statItems = [
     {
       title: 'Total Banks',
-      value: statistics.totalBanks,
+      value: safeGet(statistics, 'totalBanks', 0),
       icon: <BankIcon />,
-      color: 'primary'
+      color: 'primary',
+      formatter: (value) => value.toString()
     },
     {
       title: 'Avg Interest Rate',
-      value: `${statistics.averageInterestRate}%`,
+      value: safeGet(statistics, 'averageInterestRate', 0),
       icon: <RateIcon />,
-      color: 'success'
+      color: 'success',
+      formatter: formatPercentage
     },
     {
       title: 'Avg Loan Term',
-      value: `${statistics.averageLoanTerm} years`,
+      value: safeGet(statistics, 'averageLoanTerm', 0),
       icon: <TermIcon />,
-      color: 'info'
+      color: 'info',
+      formatter: (value) => `${value} years`
     },
     {
       title: 'Avg Max Loan',
-      value: `$${statistics.averageMaxLoan.toLocaleString()}`,
+      value: safeGet(statistics, 'averageMaxLoan', 0),
       icon: <LoanIcon />,
-      color: 'warning'
+      color: 'warning',
+      formatter: formatCurrency
     },
     {
       title: 'Avg Min Down Payment',
-      value: `$${statistics.averageMinDownPayment.toLocaleString()}`,
+      value: safeGet(statistics, 'averageMinDownPayment', 0),
       icon: <PaymentIcon />,
-      color: 'secondary'
+      color: 'secondary',
+      formatter: formatCurrency
     }
   ];
 
@@ -74,7 +80,7 @@ const BanksStatistics = () => {
           Banks Statistics
         </Typography>
         <Typography variant="body2" color="textSecondary" paragraph>
-          Calculated using Immutable.js for optimal performance
+          Calculated using Immutable.js and Lodash for optimal performance
         </Typography>
         
         <Divider sx={{ mb: 2 }} />
@@ -101,7 +107,7 @@ const BanksStatistics = () => {
                     {item.title}
                   </Typography>
                   <Typography variant="h6" color="textPrimary">
-                    {item.value}
+                    {item.formatter(item.value)}
                   </Typography>
                 </Box>
               </Box>
@@ -111,7 +117,7 @@ const BanksStatistics = () => {
         
         <Box sx={{ mt: 2 }}>
           <Chip
-            label="Powered by Immutable.js"
+            label="Powered by Immutable.js & Lodash"
             size="small"
             color="primary"
             variant="outlined"

@@ -15,21 +15,24 @@ import {
   Grid
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
+import { isEmpty, isNumber, clamp, round } from 'lodash';
 
 import { banksOperations, banksSelectors } from '../../redux/banks';
 import { useSelector, useDispatch } from 'react-redux';
 import numeral from 'numeral';
 
 const calculateMonthlyPayment = (principal, annualRate, years) => {
-  if (!principal || !annualRate || !years) return 0;
+  if (!isNumber(principal) || !isNumber(annualRate) || !isNumber(years)) return 0;
   
   const monthlyRate = annualRate / 100 / 12;
   const numberOfPayments = years * 12;
   
   if (monthlyRate === 0) return principal / numberOfPayments;
   
-  return (principal * monthlyRate * Math.pow(1 + monthlyRate, numberOfPayments)) / 
+  const payment = (principal * monthlyRate * Math.pow(1 + monthlyRate, numberOfPayments)) / 
          (Math.pow(1 + monthlyRate, numberOfPayments) - 1);
+  
+  return round(payment, 2);
 };
 
 function Calc() {  
@@ -80,32 +83,37 @@ function Calc() {
   const validateForm = () => {
     const { loanApr, initialLoan, downPayment, loanTerm } = formData;
     
-    if (!initialLoan || !downPayment || !loanTerm || !loanApr) {
+    if (isEmpty(initialLoan) || isEmpty(downPayment) || isEmpty(loanTerm) || isEmpty(loanApr)) {
       setValidationError('All fields are required');
       return false;
     }
     
-    if (parseFloat(loanApr) > 100 || parseFloat(loanApr) < 0) {
+    const apr = parseFloat(loanApr);
+    const loan = parseFloat(initialLoan);
+    const down = parseFloat(downPayment);
+    const term = parseFloat(loanTerm);
+    
+    if (!isNumber(apr) || apr > 100 || apr < 0) {
       setValidationError('Interest rate must be between 0 and 100%');
       return false;
     }
     
-    if (parseFloat(initialLoan) <= 0) {
+    if (!isNumber(loan) || loan <= 0) {
       setValidationError('Initial loan must be greater than 0');
       return false;
     }
     
-    if (parseFloat(downPayment) < 0) {
+    if (!isNumber(down) || down < 0) {
       setValidationError('Down payment cannot be negative');
       return false;
     }
     
-    if (parseFloat(loanTerm) <= 0) {
+    if (!isNumber(term) || term <= 0) {
       setValidationError('Loan term must be greater than 0');
       return false;
     }
     
-    if (parseFloat(loanApr) > 15) {
+    if (apr > 15) {
       setWarning('Consider negotiating for a better rate');
     }
     

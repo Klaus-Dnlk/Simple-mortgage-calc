@@ -1,4 +1,5 @@
 import { List, Map, fromJS } from 'immutable';
+import { isEmpty, isNumber, round, sumBy, filter, sortBy, groupBy } from 'lodash';
 
 export const toImmutableList = (array) => {
   return List(array);
@@ -55,7 +56,7 @@ export const groupBanksBy = (banks, groupBy) => {
 export const calculateBanksStatistics = (banks) => {
   const banksList = List.isList(banks) ? banks : List(banks);
   
-  if (banksList.isEmpty()) {
+  if (isEmpty(banksList.toJS())) {
     return {
       totalBanks: 0,
       averageInterestRate: 0,
@@ -65,29 +66,19 @@ export const calculateBanksStatistics = (banks) => {
     };
   }
   
-  const totalBanks = banksList.size;
+  const banksArray = banksList.toJS();
+  const totalBanks = banksArray.length;
   
-  const averageInterestRate = banksList
-    .map(bank => parseFloat(bank.InterestRate) || 0)
-    .reduce((sum, rate) => sum + rate, 0) / totalBanks;
-    
-  const averageLoanTerm = banksList
-    .map(bank => parseFloat(bank.LoanTerm) || 0)
-    .reduce((sum, term) => sum + term, 0) / totalBanks;
-    
-  const averageMaxLoan = banksList
-    .map(bank => parseFloat(bank.MaximumLoan) || 0)
-    .reduce((sum, loan) => sum + loan, 0) / totalBanks;
-    
-  const averageMinDownPayment = banksList
-    .map(bank => parseFloat(bank.MinimumDownPayment) || 0)
-    .reduce((sum, payment) => sum + payment, 0) / totalBanks;
+  const averageInterestRate = sumBy(banksArray, bank => parseFloat(bank.InterestRate) || 0) / totalBanks;
+  const averageLoanTerm = sumBy(banksArray, bank => parseFloat(bank.LoanTerm) || 0) / totalBanks;
+  const averageMaxLoan = sumBy(banksArray, bank => parseFloat(bank.MaximumLoan) || 0) / totalBanks;
+  const averageMinDownPayment = sumBy(banksArray, bank => parseFloat(bank.MinimumDownPayment) || 0) / totalBanks;
   
   return {
     totalBanks,
-    averageInterestRate: Math.round(averageInterestRate * 100) / 100,
-    averageLoanTerm: Math.round(averageLoanTerm * 100) / 100,
-    averageMaxLoan: Math.round(averageMaxLoan),
-    averageMinDownPayment: Math.round(averageMinDownPayment)
+    averageInterestRate: round(averageInterestRate, 2),
+    averageLoanTerm: round(averageLoanTerm, 2),
+    averageMaxLoan: round(averageMaxLoan),
+    averageMinDownPayment: round(averageMinDownPayment)
   };
 }; 

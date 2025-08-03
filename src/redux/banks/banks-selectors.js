@@ -1,4 +1,5 @@
 import { List } from 'immutable';
+import { isEmpty, debounce } from 'lodash';
 import { calculateBanksStatistics, findBanksByCriteria, sortBanks } from '../../utils/immutable-utils';
 
 export const getLoading = (state) => state.banks.loading
@@ -13,7 +14,7 @@ export const getFilteredBanks = (state) => {
   const banks = getAllBanks(state)
   const filter = getFilter(state)
   
-  if (!filter) return banks
+  if (isEmpty(filter)) return banks
   
   return List(banks)
     .filter(bank => 
@@ -36,3 +37,8 @@ export const getSortedBanks = (state, sortBy, sortOrder = 'asc') => {
   const banks = getAllBanks(state)
   return sortBanks(banks, sortBy, sortOrder).toJS()
 }
+
+// Debounced селектор для пошуку (оптимізація продуктивності)
+export const getDebouncedFilteredBanks = debounce((state) => {
+  return getFilteredBanks(state)
+}, 300)

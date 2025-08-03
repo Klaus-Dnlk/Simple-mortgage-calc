@@ -4,6 +4,7 @@ import { useIntl } from 'react-intl'
 import AppRoutes from './routes'
 import ErrorBoundary from './components/ErrorBoundary'
 import LanguageSwitcher from './components/LanguageSwitcher'
+import CookiesBanner from './components/CookiesBanner'
 import './App.css'
 
 function App() {
@@ -33,6 +34,7 @@ function App() {
         </AppBar>
 
         <AppRoutes />
+        <CookiesBanner />
       </Box>
     </ErrorBoundary>
   )
