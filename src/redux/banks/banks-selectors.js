@@ -1,3 +1,6 @@
+import { List } from 'immutable';
+import { calculateBanksStatistics, findBanksByCriteria, sortBanks } from '../../utils/immutable-utils';
+
 export const getLoading = (state) => state.banks.loading
 
 export const getFilter = (state) => state.banks.filter
@@ -12,7 +15,24 @@ export const getFilteredBanks = (state) => {
   
   if (!filter) return banks
   
-  return banks.filter(bank => 
-    bank.BankName.toLowerCase().includes(filter.toLowerCase())
-  )
+  return List(banks)
+    .filter(bank => 
+      bank.BankName.toLowerCase().includes(filter.toLowerCase())
+    )
+    .toJS()
+}
+
+export const getBanksStatistics = (state) => {
+  const banks = getAllBanks(state)
+  return calculateBanksStatistics(banks)
+}
+
+export const getBanksByCriteria = (state, criteria) => {
+  const banks = getAllBanks(state)
+  return findBanksByCriteria(banks, criteria).toJS()
+}
+
+export const getSortedBanks = (state, sortBy, sortOrder = 'asc') => {
+  const banks = getAllBanks(state)
+  return sortBanks(banks, sortBy, sortOrder).toJS()
 }

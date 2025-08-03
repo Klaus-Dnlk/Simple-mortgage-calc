@@ -5,6 +5,7 @@ import { useIntl } from 'react-intl';
 import { banksOperations, banksSelectors } from '../../redux/banks';
 import AddBankModal from '../Modal';
 import BankDetailsModal from '../../components/BankDetailsModal';
+import BanksStatistics from '../../components/BanksStatistics';
 
 import {
   Box,
@@ -93,6 +94,10 @@ function Banks() {
           Failed to load banks: {error}
         </Alert>
       )}
+
+      <Box sx={{ mb: 3 }}>
+        <BanksStatistics />
+      </Box>
 
       {showModal && (
         <AddBankModal onCloseModal={handleCloseModal} />
