@@ -1,28 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { 
-  Box, 
-  Button, 
-  OutlinedInput, 
-  InputLabel, 
   FormControl, 
-  Paper, 
-  Typography, 
-  IconButton, 
-  Tooltip, 
+  InputLabel, 
   MenuItem, 
-  Select,
-  Alert,
-  Grid,
-  Stack
+  Select
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
-import { isEmpty, isNumber, clamp, round } from 'lodash';
+import { isEmpty, isNumber, round } from 'lodash';
 
 import { banksOperations, banksSelectors } from '../../redux/banks';
 import { useSelector, useDispatch } from 'react-redux';
 import numeral from 'numeral';
 import { generateMortgageReport, savePDF } from '../../utils/pdf-utils';
+import './style.css';
 
 const calculateMonthlyPayment = (principal, annualRate, years) => {
   if (!isNumber(principal) || !isNumber(annualRate) || !isNumber(years)) return 0;
@@ -187,149 +178,150 @@ function Calc() {
 
   if (isLoading) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
-        <Typography>Loading banks...</Typography>
-      </Box>
+      <div className="calc-container">
+        <div className="calc-content">
+          <div style={{ display: 'flex', justifyContent: 'center', marginTop: '2rem' }}>
+            <p>Loading banks...</p>
+          </div>
+        </div>
+      </div>
     );
   }
 
   if (error) {
     return (
-      <Box sx={{ m: 2 }}>
-        <Alert severity="error">Failed to load banks: {error}</Alert>
-      </Box>
+      <div className="calc-container">
+        <div className="calc-content">
+          <div className="calc-alert error">
+            Failed to load banks: {error}
+          </div>
+        </div>
+      </div>
     );
   }
 
   return (
-    <Box sx={{ p: 3 }}>
-      <Typography variant="h4" sx={{ mb: 3, textAlign: 'center' }}>
-        Mortgage Calculator
-      </Typography>
-      
-      <Grid container spacing={3}>
-        <Grid item xs={12} md={6}>
-          <FormControl fullWidth sx={{ mb: 3 }}>
-            <InputLabel id="selectBank">Bank name</InputLabel>
-            <Select
-              labelId="selectBank"
-              value={bankValue}
-              label="Bank name"
-              onChange={handleBankChange}
-            >
-              {banks.map(({ id, BankName }) => (
-                <MenuItem key={id} value={BankName}>{BankName}</MenuItem>  
-              ))}
-            </Select>
-          </FormControl>
+    <div className="calc-container">
+      <div className="calc-content">
+        <div className="calc-header">
+          <h1 className="calc-title">Mortgage Calculator</h1>
+        </div>
+        
+        <div className="calc-form-section">
+          <div className="calc-bank-select">
+            <FormControl fullWidth>
+              <InputLabel id="selectBank">Bank name</InputLabel>
+              <Select
+                labelId="selectBank"
+                value={bankValue}
+                label="Bank name"
+                onChange={handleBankChange}
+              >
+                {banks.map(({ id, BankName }) => (
+                  <MenuItem key={id} value={BankName}>{BankName}</MenuItem>  
+                ))}
+              </Select>
+            </FormControl>
+          </div>
           
           {validationError && (
-            <Alert severity="error" sx={{ mb: 2 }}>
+            <div className="calc-alert error">
               {validationError}
-            </Alert>
+            </div>
           )}
           
           {warning && (
-            <Alert severity="warning" sx={{ mb: 2 }}>
+            <div className="calc-alert warning">
               {warning}
-            </Alert>
+            </div>
           )}
           
-          <Grid container spacing={2}>
-            <Grid item xs={12} sm={6}>
-              <FormControl fullWidth>
-                <InputLabel>Initial Loan ($)</InputLabel>
-                <OutlinedInput 
-                  value={formData.initialLoan}
-                  onChange={(e) => handleInputChange('initialLoan', e.target.value)}
-                  type="number"
-                />
-              </FormControl>
-            </Grid>
+          <div className="calc-form-grid">
+            <div className="calc-form-field">
+              <label>Initial Loan ($)</label>
+              <input 
+                value={formData.initialLoan}
+                onChange={(e) => handleInputChange('initialLoan', e.target.value)}
+                type="number"
+                placeholder="Enter loan amount"
+              />
+            </div>
 
-            <Grid item xs={12} sm={6}>
-              <FormControl fullWidth>
-                <InputLabel>Down Payment ($)</InputLabel>
-                <OutlinedInput 
-                  value={formData.downPayment}
-                  onChange={(e) => handleInputChange('downPayment', e.target.value)}
-                  type="number"
-                />
-              </FormControl>
-            </Grid>
+            <div className="calc-form-field">
+              <label>Down Payment ($)</label>
+              <input 
+                value={formData.downPayment}
+                onChange={(e) => handleInputChange('downPayment', e.target.value)}
+                type="number"
+                placeholder="Enter down payment"
+              />
+            </div>
 
-            <Grid item xs={12} sm={6}>
-              <FormControl fullWidth>
-                <InputLabel>Loan Term (years)</InputLabel>
-                <OutlinedInput 
-                  value={formData.loanTerm}
-                  onChange={(e) => handleInputChange('loanTerm', e.target.value)}
-                  type="number"
-                />
-              </FormControl>
-            </Grid>
+            <div className="calc-form-field">
+              <label>Loan Term (years)</label>
+              <input 
+                value={formData.loanTerm}
+                onChange={(e) => handleInputChange('loanTerm', e.target.value)}
+                type="number"
+                placeholder="Enter loan term"
+              />
+            </div>
 
-            <Grid item xs={12} sm={6}>
-              <FormControl fullWidth>
-                <InputLabel>APR (%)</InputLabel>
-                <OutlinedInput 
-                  value={formData.loanApr}
-                  onChange={(e) => handleInputChange('loanApr', e.target.value)}
-                  type="number"
-                />
-              </FormControl>
-            </Grid>
-          </Grid>
+            <div className="calc-form-field">
+              <label>APR (%)</label>
+              <input 
+                value={formData.loanApr}
+                onChange={(e) => handleInputChange('loanApr', e.target.value)}
+                type="number"
+                placeholder="Enter interest rate"
+              />
+            </div>
+          </div>
           
-          <Stack direction="row" spacing={2} sx={{ mt: 3 }}>
-            <Button 
-              variant='contained' 
+          <div className="calc-buttons">
+            <button 
+              className="calc-button calc-button-primary"
               onClick={handleCalculate}
-              size="large"
             >
               Calculate
-            </Button>
-            <Tooltip title="Clear form">
-              <IconButton onClick={handleReset} data-testid="reset">
-                <DeleteIcon />
-              </IconButton>
-            </Tooltip>
-            {monthPayment > 0 && (
-              <Tooltip title="Export to PDF">
-                <IconButton 
-                  onClick={handleExportPDF}
-                  color="primary"
-                  data-testid="export-pdf"
-                >
-                  <PictureAsPdfIcon />
-                </IconButton>
-              </Tooltip>
-            )}
-          </Stack>
-        </Grid>
-        
-        <Grid item xs={12} md={6}>
-          <Paper elevation={3} sx={{ p: 4, textAlign: 'center', minHeight: 200 }}>
-            <Typography variant="h6" sx={{ mb: 2 }}>
-              Monthly Payment
-            </Typography>
-            <Typography 
-              variant="h4" 
-              color="primary" 
-              data-testid="monthly-payment"
-              sx={{ fontWeight: 'bold' }}
+            </button>
+            <button 
+              className="calc-icon-button delete"
+              onClick={handleReset} 
+              data-testid="reset"
+              title="Clear form"
             >
-              {numeral(monthPayment).format('$0,0.00')}
-            </Typography>
+              <DeleteIcon />
+            </button>
             {monthPayment > 0 && (
-              <Typography variant="body2" sx={{ mt: 2, color: 'text.secondary' }}>
-                Total payments: {numeral(monthPayment * parseFloat(formData.loanTerm || 0) * 12).format('$0,0.00')}
-              </Typography>
+              <button 
+                className="calc-icon-button export"
+                onClick={handleExportPDF}
+                data-testid="export-pdf"
+                title="Export to PDF"
+              >
+                <PictureAsPdfIcon />
+              </button>
             )}
-          </Paper>
-        </Grid>
-      </Grid>
-    </Box>
+          </div>
+        </div>
+        
+        <div className="calc-result-section">
+          <h2 className="calc-result-title">Monthly Payment</h2>
+          <div 
+            className="calc-result-amount"
+            data-testid="monthly-payment"
+          >
+            {numeral(monthPayment).format('$0,0.00')}
+          </div>
+          {monthPayment > 0 && (
+            <p className="calc-result-details">
+              Total payments: {numeral(monthPayment * parseFloat(formData.loanTerm || 0) * 12).format('$0,0.00')}
+            </p>
+          )}
+        </div>
+      </div>
+    </div>
   );
 }
 

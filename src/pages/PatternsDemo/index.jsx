@@ -1,23 +1,11 @@
 import React, { useState } from 'react';
-import { 
-  Box, 
-  Typography, 
-  Button, 
-  Paper, 
-  Grid, 
-  Divider,
-  Alert,
-  TextField,
-  Card,
-  CardContent
-} from '@mui/material';
 import Portal from '../../components/Portal';
 import DataFetcher from '../../components/DataFetcher';
 import withAuth from '../../components/withAuth';
 import useFormValidation from '../../hooks/useFormValidation';
-import MemoizedBankCard from '../../components/MemoizedBankCard';
 import RefDemo from '../../components/RefDemo';
 import IframeEmbed from '../../components/IframeDemo';
+import './style.css';
 
 /**
  * Demo Component - Showcases React Patterns
@@ -62,17 +50,27 @@ const mockFetchBanks = () => {
 
 // Component that will be wrapped with HOC
 const ProtectedContent = ({ isAuthenticated, logout }) => (
-  <Box sx={{ p: 2, bgcolor: 'success.light', borderRadius: 1, mb: 2 }}>
-    <Typography variant="h6" color="white">
+  <div style={{ padding: '1rem', backgroundColor: '#4caf50', borderRadius: '4px', marginBottom: '1rem' }}>
+    <h6 style={{ color: 'white', margin: '0 0 0.5rem 0' }}>
       🔐 Protected Content (HOC Demo)
-    </Typography>
-    <Typography variant="body2" color="white" sx={{ mb: 1 }}>
+    </h6>
+    <p style={{ color: 'white', margin: '0 0 0.5rem 0' }}>
       This content is only visible when authenticated
-    </Typography>
-    <Button variant="contained" size="small" onClick={logout}>
+    </p>
+    <button 
+      style={{ 
+        padding: '0.5rem 1rem', 
+        backgroundColor: 'white', 
+        color: '#4caf50', 
+        border: 'none', 
+        borderRadius: '4px', 
+        cursor: 'pointer' 
+      }} 
+      onClick={logout}
+    >
       Logout
-    </Button>
-  </Box>
+    </button>
+  </div>
 );
 
 // Wrap with HOC
@@ -125,235 +123,211 @@ const PatternsDemo = () => {
   }
 
   return (
-    <Box sx={{ p: 3 }}>
-      <Typography variant="h4" gutterBottom>
-        React Patterns Demo
-      </Typography>
-      <Typography variant="body1" color="text.secondary" sx={{ mb: 4 }}>
-        This page demonstrates various React patterns for code reusability and maintainability.
-      </Typography>
+    <div className="patterns-container">
+      <div className="patterns-content">
+        <div className="patterns-header">
+          <h1 className="patterns-title">React Patterns Demo</h1>
+          <p className="patterns-subtitle">
+            This page demonstrates various React patterns for code reusability and maintainability.
+          </p>
+        </div>
 
-      <Grid container spacing={3}>
-        {/* ErrorBoundary Demo */}
-        <Grid item xs={12} md={6}>
-          <Paper sx={{ p: 3 }}>
-            <Typography variant="h6" gutterBottom>
-              🛡️ ErrorBoundary Demo
-            </Typography>
-            <Typography variant="body2" sx={{ mb: 2 }}>
+        <div className="patterns-grid">
+          {/* ErrorBoundary Demo */}
+          <div className="patterns-card">
+            <h2 className="patterns-card-title">🛡️ ErrorBoundary Demo</h2>
+            <p className="patterns-card-description">
               ErrorBoundary catches JavaScript errors anywhere in the child component tree.
-            </Typography>
-            <Button 
-              variant="contained" 
-              color="error"
-              onClick={() => setTriggerError(true)}
-            >
-              Trigger Error
-            </Button>
-          </Paper>
-        </Grid>
-
-        {/* Portal Demo */}
-        <Grid item xs={12} md={6}>
-          <Paper sx={{ p: 3 }}>
-            <Typography variant="h6" gutterBottom>
-              🚪 Portal Demo
-            </Typography>
-            <Typography variant="body2" sx={{ mb: 2 }}>
-              Portals render content outside the normal DOM hierarchy.
-            </Typography>
-            <Button 
-              variant="contained"
-              onClick={() => setShowPortal(true)}
-            >
-              Open Portal Modal
-            </Button>
-          </Paper>
-        </Grid>
-
-        {/* HOC Demo */}
-        <Grid item xs={12} md={6}>
-          <Paper sx={{ p: 3 }}>
-            <Typography variant="h6" gutterBottom>
-              🔄 Higher-Order Component Demo
-            </Typography>
-            <Typography variant="body2" sx={{ mb: 2 }}>
-              HOCs wrap components with additional functionality.
-            </Typography>
-            <ProtectedComponent />
-          </Paper>
-        </Grid>
-
-        {/* Custom Hook Demo */}
-        <Grid item xs={12} md={6}>
-          <Paper sx={{ p: 3 }}>
-            <Typography variant="h6" gutterBottom>
-              🎣 Custom Hook Demo
-            </Typography>
-            <Typography variant="body2" sx={{ mb: 2 }}>
-              Custom hooks encapsulate reusable logic.
-            </Typography>
-            <form onSubmit={handleSubmit((formData) => {
-              alert('Form submitted: ' + JSON.stringify(formData, null, 2));
-            })}>
-              <TextField
-                fullWidth
-                label="Email"
-                value={values.email}
-                onChange={(e) => handleChange('email', e.target.value)}
-                onBlur={() => handleBlur('email')}
-                error={!!errors.email}
-                helperText={errors.email}
-                sx={{ mb: 2 }}
-              />
-              <TextField
-                fullWidth
-                label="Password"
-                type="password"
-                value={values.password}
-                onChange={(e) => handleChange('password', e.target.value)}
-                onBlur={() => handleBlur('password')}
-                error={!!errors.password}
-                helperText={errors.password}
-                sx={{ mb: 2 }}
-              />
-              <TextField
-                fullWidth
-                label="Confirm Password"
-                type="password"
-                value={values.confirmPassword}
-                onChange={(e) => handleChange('confirmPassword', e.target.value)}
-                onBlur={() => handleBlur('confirmPassword')}
-                error={!!errors.confirmPassword}
-                helperText={errors.confirmPassword}
-                sx={{ mb: 2 }}
-              />
-              <Button 
-                type="submit" 
-                variant="contained" 
-                disabled={!isValid}
+            </p>
+            <div className="patterns-card-content">
+              <button 
+                className="patterns-button patterns-button-error"
+                onClick={() => setTriggerError(true)}
               >
-                Submit Form
-              </Button>
-            </form>
-          </Paper>
-        </Grid>
+                Trigger Error
+              </button>
+            </div>
+          </div>
 
-        {/* Render Props Demo */}
-        <Grid item xs={12}>
-          <Paper sx={{ p: 3 }}>
-            <Typography variant="h6" gutterBottom>
-              🎭 Render Props Demo
-            </Typography>
-            <Typography variant="body2" sx={{ mb: 2 }}>
-              Render props pattern shares behavior through a prop that receives a function.
-            </Typography>
-            <DataFetcher fetchFunction={mockFetchBanks}>
-              {({ data, loading, error, refetch }) => (
-                <Box>
-                  {loading && <Typography>Loading banks...</Typography>}
-                  {error && <Alert severity="error">{error}</Alert>}
-                  {data && (
-                    <Box>
-                      <Typography variant="subtitle1" sx={{ mb: 2 }}>
-                        Fetched {data.length} banks using render props pattern
-                      </Typography>
-                      <Button variant="outlined" onClick={refetch} sx={{ mb: 2 }}>
-                        Refetch Data
-                      </Button>
-                    </Box>
-                  )}
-                </Box>
-              )}
-            </DataFetcher>
-          </Paper>
-        </Grid>
+          {/* Portal Demo */}
+          <div className="patterns-card">
+            <h2 className="patterns-card-title">🚪 Portal Demo</h2>
+            <p className="patterns-card-description">
+              Portals render content outside the normal DOM hierarchy.
+            </p>
+            <div className="patterns-card-content">
+              <button 
+                className="patterns-button patterns-button-primary"
+                onClick={() => setShowPortal(true)}
+              >
+                Open Portal Modal
+              </button>
+            </div>
+          </div>
 
-        {/* Memoization Demo */}
-        <Grid item xs={12}>
-          <Paper sx={{ p: 3 }}>
-            <Typography variant="h6" gutterBottom>
-              ⚡ Memoization Demo
-            </Typography>
-            <Typography variant="body2" sx={{ mb: 2 }}>
-              Memoization prevents unnecessary re-renders and optimizes expensive calculations.
-            </Typography>
-            <Grid container spacing={2}>
-              {sampleBanks.map(bank => (
-                <Grid item xs={12} sm={6} md={4} key={bank.id}>
-                  <MemoizedBankCard
-                    bank={bank}
-                    onSelect={setSelectedBank}
-                    isSelected={selectedBank === bank.id}
+          {/* HOC Demo */}
+          <div className="patterns-card">
+            <h2 className="patterns-card-title">🔄 Higher-Order Component Demo</h2>
+            <p className="patterns-card-description">
+              HOCs wrap components with additional functionality.
+            </p>
+            <div className="patterns-card-content">
+              <ProtectedComponent />
+            </div>
+          </div>
+
+          {/* Custom Hook Demo */}
+          <div className="patterns-card">
+            <h2 className="patterns-card-title">🎣 Custom Hook Demo</h2>
+            <p className="patterns-card-description">
+              Custom hooks encapsulate reusable logic.
+            </p>
+            <div className="patterns-card-content">
+              <form className="patterns-form" onSubmit={handleSubmit((formData) => {
+                alert('Form submitted: ' + JSON.stringify(formData, null, 2));
+              })}>
+                <div className={`patterns-form-field ${errors.email ? 'error' : ''}`}>
+                  <label>Email</label>
+                  <input
+                    type="email"
+                    value={values.email}
+                    onChange={(e) => handleChange('email', e.target.value)}
+                    onBlur={() => handleBlur('email')}
+                    placeholder="Enter your email"
                   />
-                </Grid>
-              ))}
-            </Grid>
-            {selectedBank && (
-              <Alert severity="info" sx={{ mt: 2 }}>
-                Selected bank ID: {selectedBank}
-              </Alert>
-            )}
-          </Paper>
-        </Grid>
+                  {errors.email && <div className="error-message">{errors.email}</div>}
+                </div>
+                <div className={`patterns-form-field ${errors.password ? 'error' : ''}`}>
+                  <label>Password</label>
+                  <input
+                    type="password"
+                    value={values.password}
+                    onChange={(e) => handleChange('password', e.target.value)}
+                    onBlur={() => handleBlur('password')}
+                    placeholder="Enter your password"
+                  />
+                  {errors.password && <div className="error-message">{errors.password}</div>}
+                </div>
+                <div className={`patterns-form-field ${errors.confirmPassword ? 'error' : ''}`}>
+                  <label>Confirm Password</label>
+                  <input
+                    type="password"
+                    value={values.confirmPassword}
+                    onChange={(e) => handleChange('confirmPassword', e.target.value)}
+                    onBlur={() => handleBlur('confirmPassword')}
+                    placeholder="Confirm your password"
+                  />
+                  {errors.confirmPassword && <div className="error-message">{errors.confirmPassword}</div>}
+                </div>
+                <button 
+                  type="submit" 
+                  className="patterns-button patterns-button-primary"
+                  disabled={!isValid}
+                >
+                  Submit Form
+                </button>
+              </form>
+            </div>
+          </div>
 
-        {/* External Website Embed */}
-        <Grid item xs={12}>
-          <Paper sx={{ p: 3 }}>
-            <Typography variant="h6" gutterBottom>
-              🌐 External Website Embed
-            </Typography>
-            <Typography variant="body2" sx={{ mb: 2 }}>
+          {/* Render Props Demo */}
+          <div className="patterns-card patterns-full-width">
+            <h2 className="patterns-card-title">🎭 Render Props Demo</h2>
+            <p className="patterns-card-description">
+              Render props pattern shares behavior through a prop that receives a function.
+            </p>
+            <div className="patterns-card-content">
+              <DataFetcher fetchFunction={mockFetchBanks}>
+                {({ data, loading, error, refetch }) => (
+                  <div>
+                    {loading && <p>Loading banks...</p>}
+                    {error && <div className="patterns-alert error">{error}</div>}
+                    {data && (
+                      <div>
+                        <p style={{ marginBottom: '1rem' }}>
+                          Fetched {data.length} banks using render props pattern
+                        </p>
+                        <button className="patterns-button patterns-button-outline" onClick={refetch}>
+                          Refetch Data
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </DataFetcher>
+            </div>
+          </div>
+
+          {/* Memoization Demo */}
+          <div className="patterns-card patterns-full-width">
+            <h2 className="patterns-card-title">⚡ Memoization Demo</h2>
+            <p className="patterns-card-description">
+              Memoization prevents unnecessary re-renders and optimizes expensive calculations.
+            </p>
+            <div className="patterns-card-content">
+              <div className="patterns-bank-grid">
+                {sampleBanks.map(bank => (
+                  <div 
+                    key={bank.id}
+                    className={`patterns-bank-card ${selectedBank === bank.id ? 'selected' : ''}`}
+                    onClick={() => setSelectedBank(bank.id)}
+                  >
+                    <div className="patterns-bank-name">{bank.BankName}</div>
+                    <div className="patterns-bank-details">
+                      Interest Rate: {bank.InterestRate}%<br/>
+                      Max Loan: ${bank.MaximumLoan.toLocaleString()}<br/>
+                      Min Down Payment: ${bank.MinimumDownPayment.toLocaleString()}<br/>
+                      Loan Term: {bank.LoanTerm} years
+                    </div>
+                  </div>
+                ))}
+              </div>
+              {selectedBank && (
+                <div className="patterns-alert info" style={{ marginTop: '1rem' }}>
+                  Selected bank ID: {selectedBank}
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* External Website Embed */}
+          <div className="patterns-card patterns-full-width">
+            <h2 className="patterns-card-title">🌐 External Website Embed</h2>
+            <p className="patterns-card-description">
               Embed external websites like Facebook, GitHub, and currency exchange rates safely.
-            </Typography>
-            <IframeEmbed />
-          </Paper>
-        </Grid>
+            </p>
+            <div className="patterns-card-content">
+              <IframeEmbed />
+            </div>
+          </div>
 
-        {/* Refs Demo */}
-        <Grid item xs={12}>
-          <RefDemo />
-        </Grid>
-      </Grid>
+          {/* Refs Demo */}
+          <div className="patterns-card patterns-full-width">
+            <RefDemo />
+          </div>
+        </div>
 
-      {/* Portal Modal */}
-      {showPortal && (
-        <Portal>
-          <Box
-            sx={{
-              position: 'fixed',
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              bgcolor: 'rgba(0, 0, 0, 0.5)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              zIndex: 1300
-            }}
-            onClick={() => setShowPortal(false)}
-          >
-            <Card sx={{ maxWidth: 400, m: 2 }} onClick={(e) => e.stopPropagation()}>
-              <CardContent>
-                <Typography variant="h6" gutterBottom>
-                  Portal Modal
-                </Typography>
-                <Typography variant="body2" sx={{ mb: 2 }}>
+        {/* Portal Modal */}
+        {showPortal && (
+          <Portal>
+            <div className="patterns-portal-modal" onClick={() => setShowPortal(false)}>
+              <div className="patterns-portal-card" onClick={(e) => e.stopPropagation()}>
+                <h3 className="patterns-portal-title">Portal Modal</h3>
+                <p className="patterns-portal-content">
                   This modal is rendered using React Portal, which renders content outside the normal DOM hierarchy.
-                </Typography>
-                <Button 
-                  variant="contained" 
+                </p>
+                <button 
+                  className="patterns-button patterns-button-primary"
                   onClick={() => setShowPortal(false)}
                 >
                   Close
-                </Button>
-              </CardContent>
-            </Card>
-          </Box>
-        </Portal>
-      )}
-    </Box>
+                </button>
+              </div>
+            </div>
+          </Portal>
+        )}
+      </div>
+    </div>
   );
 };
 

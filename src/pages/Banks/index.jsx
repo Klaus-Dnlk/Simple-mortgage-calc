@@ -6,25 +6,11 @@ import { banksOperations, banksSelectors } from '../../redux/banks';
 import AddBankModal from '../Modal';
 import BankDetailsModal from '../../components/BankDetailsModal';
 import BanksStatistics from '../../components/BanksStatistics';
+import './style.css';
 
 import {
-  Box,
-  Table, 
-  TableBody, 
-  TableCell, 
-  TableContainer, 
-  TableHead, 
-  TableRow,
-  Paper,
-  CircularProgress,
   DeleteIcon,
-  IconButton,
-  AddCircleOutlineIcon,
-  Tooltip,
-  Typography,
-  Alert,
-  Button,
-  Stack
+  AddCircleOutlineIcon
 } from '@mui/material';
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import { generateBanksComparison, savePDF } from '../../utils/pdf-utils';
@@ -81,139 +67,134 @@ function Banks() {
 
   if (isLoading) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
-        <CircularProgress />
-      </Box>
+      <div className="banks-container">
+        <div className="banks-content">
+          <div className="banks-loading">
+            <div>Loading...</div>
+          </div>
+        </div>
+      </div>
     );
   }
 
   return (
-    <Box sx={{ p: 3 }}>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-        <Typography variant="h4">
-          {intl.formatMessage({ id: 'banks.title' })}
-        </Typography>
-        <Stack direction="row" spacing={2}>
-          {banks.length > 0 && (
-            <Tooltip title="Export banks comparison to PDF">
-              <IconButton 
+    <div className="banks-container">
+      <div className="banks-content">
+        <div className="banks-header">
+          <h1 className="banks-title">
+            {intl.formatMessage({ id: 'banks.title' })}
+          </h1>
+          <div className="banks-actions">
+            {banks.length > 0 && (
+              <button 
+                className="banks-icon-button"
                 onClick={handleExportBanksPDF}
-                color="primary"
                 data-testid="export-banks-pdf"
+                title="Export banks comparison to PDF"
               >
                 <PictureAsPdfIcon />
-              </IconButton>
-            </Tooltip>
-          )}
-          <Button
-            variant="contained"
-            startIcon={<AddCircleOutlineIcon />}
-            onClick={handleOpenModal}
-            size="large"
-          >
-            {intl.formatMessage({ id: 'banks.addBank' })}
-          </Button>
-        </Stack>
-      </Box>
+              </button>
+            )}
+            <button
+              className="banks-button"
+              onClick={handleOpenModal}
+            >
+              <AddCircleOutlineIcon />
+              {intl.formatMessage({ id: 'banks.addBank' })}
+            </button>
+          </div>
+        </div>
 
-      {error && (
-        <Alert severity="error" sx={{ mb: 3 }}>
-          Failed to load banks: {error}
-        </Alert>
-      )}
+        {error && (
+          <div className="banks-alert error">
+            Failed to load banks: {error}
+          </div>
+        )}
 
-      <Box sx={{ mb: 3 }}>
-        <BanksStatistics />
-      </Box>
+        <div className="banks-statistics">
+          <BanksStatistics />
+        </div>
 
-      {showModal && (
-        <AddBankModal onCloseModal={handleCloseModal} />
-      )}
+        {showModal && (
+          <AddBankModal onCloseModal={handleCloseModal} />
+        )}
 
-      {showDetailsModal && selectedBank && (
-        <BankDetailsModal
-          bank={selectedBank}
-          isOpen={showDetailsModal}
-          onClose={handleCloseDetailsModal}
-        />
-      )}
+        {showDetailsModal && selectedBank && (
+          <BankDetailsModal
+            bank={selectedBank}
+            isOpen={showDetailsModal}
+            onClose={handleCloseDetailsModal}
+          />
+        )}
 
-      {banks.length === 0 && !isLoading ? (
-        <Paper sx={{ p: 4, textAlign: 'center' }}>
-          <Typography variant="h6" color="text.secondary">
-            {intl.formatMessage({ id: 'banks.noBanks' })}
-          </Typography>
-        </Paper>
-      ) : (
-        <TableContainer component={Paper} elevation={2}>
-          <Box sx={{ p: 2, bgcolor: 'info.light', borderRadius: 1, mb: 2 }}>
-            <Typography variant="body2" color="info.contrastText">
-              {intl.formatMessage({ id: 'banks.clickHint' })}
-            </Typography>
-          </Box>
-          <Table sx={{ minWidth: 650 }} aria-label="banks table">
-            <TableHead>
-              <TableRow sx={{ backgroundColor: 'primary.main' }}>
-                <TableCell sx={{ fontWeight: 'bold', color: 'white' }}>
-                  {intl.formatMessage({ id: 'banks.tableHeaders.bankName' })}
-                </TableCell>
-                <TableCell sx={{ fontWeight: 'bold', color: 'white' }} align="right">
-                  {intl.formatMessage({ id: 'banks.tableHeaders.interestRate' })}
-                </TableCell>
-                <TableCell sx={{ fontWeight: 'bold', color: 'white' }} align="right">
-                  {intl.formatMessage({ id: 'banks.tableHeaders.maxLoan' })}
-                </TableCell>
-                <TableCell sx={{ fontWeight: 'bold', color: 'white' }} align="right">
-                  {intl.formatMessage({ id: 'banks.tableHeaders.minDownPayment' })}
-                </TableCell>
-                <TableCell sx={{ fontWeight: 'bold', color: 'white' }} align="right">
-                  {intl.formatMessage({ id: 'banks.tableHeaders.loanTerm' })}
-                </TableCell>
-                <TableCell sx={{ fontWeight: 'bold', color: 'white' }} align="center">
-                  {intl.formatMessage({ id: 'banks.tableHeaders.actions' })}
-                </TableCell>
-              </TableRow>
-            </TableHead>
-            
-            <TableBody>
-              {banks.map(({ id, BankName, InterestRate, MaximumLoan, MinimumDownPayment, LoanTerm }) => (
-                <TableRow
-                  key={id}
-                  sx={{ 
-                    '&:last-child td, &:last-child th': { border: 0 },
-                    '&:hover': { backgroundColor: 'action.hover' },
-                    cursor: 'pointer'
-                  }}
-                  onClick={() => handleOpenDetailsModal({ id, BankName, InterestRate, MaximumLoan, MinimumDownPayment, LoanTerm })}
-                >
-                  <TableCell component="th" scope="row" sx={{ fontWeight: 'medium' }}>
-                    {BankName}
-                  </TableCell>
-                  <TableCell align="right">{InterestRate}%</TableCell>
-                  <TableCell align="right">${MaximumLoan.toLocaleString()}</TableCell>
-                  <TableCell align="right">${MinimumDownPayment.toLocaleString()}</TableCell>
-                  <TableCell align="right">{LoanTerm} years</TableCell>
-                  <TableCell align="center">
-                    <Tooltip title={intl.formatMessage({ id: 'banks.deleteTooltip' })}>
-                      <IconButton 
+        {banks.length === 0 && !isLoading ? (
+          <div className="banks-empty-state">
+            <p className="banks-empty-text">
+              {intl.formatMessage({ id: 'banks.noBanks' })}
+            </p>
+          </div>
+        ) : (
+          <div className="banks-table-container">
+            <div className="banks-hint">
+              <p className="banks-hint-text">
+                {intl.formatMessage({ id: 'banks.clickHint' })}
+              </p>
+            </div>
+            <table className="banks-table" aria-label="banks table">
+              <thead className="banks-table-head">
+                <tr>
+                  <th>
+                    {intl.formatMessage({ id: 'banks.tableHeaders.bankName' })}
+                  </th>
+                  <th>
+                    {intl.formatMessage({ id: 'banks.tableHeaders.interestRate' })}
+                  </th>
+                  <th>
+                    {intl.formatMessage({ id: 'banks.tableHeaders.maxLoan' })}
+                  </th>
+                  <th>
+                    {intl.formatMessage({ id: 'banks.tableHeaders.minDownPayment' })}
+                  </th>
+                  <th>
+                    {intl.formatMessage({ id: 'banks.tableHeaders.loanTerm' })}
+                  </th>
+                  <th>
+                    {intl.formatMessage({ id: 'banks.tableHeaders.actions' })}
+                  </th>
+                </tr>
+              </thead>
+              
+              <tbody className="banks-table-body">
+                {banks.map(({ id, BankName, InterestRate, MaximumLoan, MinimumDownPayment, LoanTerm }) => (
+                  <tr
+                    key={id}
+                    onClick={() => handleOpenDetailsModal({ id, BankName, InterestRate, MaximumLoan, MinimumDownPayment, LoanTerm })}
+                  >
+                    <td>{BankName}</td>
+                    <td>{InterestRate}%</td>
+                    <td>${MaximumLoan.toLocaleString()}</td>
+                    <td>${MinimumDownPayment.toLocaleString()}</td>
+                    <td>{LoanTerm} years</td>
+                    <td>
+                      <button 
+                        className="banks-delete-button"
                         onClick={(e) => {
                           e.stopPropagation();
                           handleDeleteBank(id);
                         }}
-                        color="error"
-                        size="small"
+                        title={intl.formatMessage({ id: 'banks.deleteTooltip' })}
                       >
                         <DeleteIcon />
-                      </IconButton>
-                    </Tooltip>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      )}
-    </Box>
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+    </div>
   );
 }
 
