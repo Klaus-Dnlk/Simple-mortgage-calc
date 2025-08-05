@@ -17,6 +17,7 @@ import withAuth from '../../components/withAuth';
 import useFormValidation from '../../hooks/useFormValidation';
 import MemoizedBankCard from '../../components/MemoizedBankCard';
 import RefDemo from '../../components/RefDemo';
+import IframeEmbed from '../../components/IframeDemo';
 
 /**
  * Demo Component - Showcases React Patterns
@@ -293,6 +294,19 @@ const PatternsDemo = () => {
                 Selected bank ID: {selectedBank}
               </Alert>
             )}
+          </Paper>
+        </Grid>
+
+        {/* External Website Embed */}
+        <Grid item xs={12}>
+          <Paper sx={{ p: 3 }}>
+            <Typography variant="h6" gutterBottom>
+              🌐 External Website Embed
+            </Typography>
+            <Typography variant="body2" sx={{ mb: 2 }}>
+              Embed external websites like Facebook, GitHub, and currency exchange rates safely.
+            </Typography>
+            <IframeEmbed />
           </Paper>
         </Grid>
 

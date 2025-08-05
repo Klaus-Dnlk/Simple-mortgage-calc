@@ -67,6 +67,7 @@
     ]
   },
   "devDependencies": {
-    "@testing-library/jest-dom": "^6.4.2"
+    "@testing-library/jest-dom": "^6.4.2",
+    "typedoc": "^0.28.9"
   }
 }

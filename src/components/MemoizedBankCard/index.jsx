@@ -1,5 +1,6 @@
 import React, { useMemo, useCallback } from 'react';
 import { Card, CardContent, Typography, Box, Chip } from '@mui/material';
+import './style.css';
 
 // MemoizedBankCard Component - Demonstrates Memoization Techniques
 // This component shows how to use React.memo, useMemo, and useCallback to optimize performance
@@ -40,36 +41,36 @@ const MemoizedBankCard = React.memo(({ bank, onSelect, isSelected }) => {
   // useMemo for complex JSX that depends on calculated values
   const cardContent = useMemo(() => (
     <CardContent>
-      <Typography variant="h6" component="h2" gutterBottom>
+      <Typography variant="h6" component="h2" className="bank-name">
         {bank.BankName}
       </Typography>
       
-      <Box sx={{ mb: 2 }}>
-        <Typography variant="body2" color="text.secondary">
+      <Box className="bank-details">
+        <Typography variant="body2" color="text.secondary" className="bank-detail-item">
           Interest Rate: <strong>{bank.InterestRate}%</strong>
         </Typography>
-        <Typography variant="body2" color="text.secondary">
+        <Typography variant="body2" color="text.secondary" className="bank-detail-item">
           Max Loan: <strong>${bank.MaximumLoan.toLocaleString()}</strong>
         </Typography>
-        <Typography variant="body2" color="text.secondary">
+        <Typography variant="body2" color="text.secondary" className="bank-detail-item">
           Min Down Payment: <strong>${bank.MinimumDownPayment.toLocaleString()}</strong>
         </Typography>
-        <Typography variant="body2" color="text.secondary">
+        <Typography variant="body2" color="text.secondary" className="bank-detail-item">
           Loan Term: <strong>{bank.LoanTerm} years</strong>
         </Typography>
       </Box>
 
-      <Box sx={{ mb: 2 }}>
-        <Typography variant="subtitle2" color="primary" gutterBottom>
+      <Box className="calculated-values">
+        <Typography variant="subtitle2" color="primary" className="calculated-values-title">
           Calculated Values:
         </Typography>
-        <Typography variant="body2" color="text.secondary">
+        <Typography variant="body2" color="text.secondary" className="calculated-value-item">
           Monthly Payment: <strong>${calculatedValues.monthlyPayment.toLocaleString()}</strong>
         </Typography>
-        <Typography variant="body2" color="text.secondary">
+        <Typography variant="body2" color="text.secondary" className="calculated-value-item">
           Total Interest: <strong>${calculatedValues.totalInterest.toLocaleString()}</strong>
         </Typography>
-        <Typography variant="body2" color="text.secondary">
+        <Typography variant="body2" color="text.secondary" className="calculated-value-item">
           Down Payment %: <strong>{calculatedValues.downPaymentPercentage}%</strong>
         </Typography>
       </Box>
@@ -79,23 +80,14 @@ const MemoizedBankCard = React.memo(({ bank, onSelect, isSelected }) => {
         color={isSelected ? "primary" : "default"}
         variant={isSelected ? "filled" : "outlined"}
         onClick={handleSelect}
-        sx={{ cursor: 'pointer' }}
+        className="select-chip"
       />
     </CardContent>
   ), [bank.BankName, bank.InterestRate, bank.MaximumLoan, bank.MinimumDownPayment, bank.LoanTerm, calculatedValues, isSelected, handleSelect]);
 
   return (
     <Card 
-      sx={{ 
-        m: 1, 
-        cursor: 'pointer',
-        border: isSelected ? '2px solid #1976d2' : '1px solid #e0e0e0',
-        '&:hover': {
-          boxShadow: 3,
-          transform: 'translateY(-2px)',
-          transition: 'all 0.2s ease-in-out'
-        }
-      }}
+      className={`memoized-bank-card ${isSelected ? 'selected' : ''}`}
       onClick={handleSelect}
     >
       {cardContent}
